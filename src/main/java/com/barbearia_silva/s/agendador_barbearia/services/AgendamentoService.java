@@ -1,8 +1,10 @@
 package com.barbearia_silva.s.agendador_barbearia.services;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
-import com.barbearia_silva.s.agendador_barbearia.entities.Agendamento;
-import com.barbearia_silva.s.agendador_barbearia.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
+import com.barbearia_silva.s.agendador_barbearia.model.entities.Agendamento;
+import com.barbearia_silva.s.agendador_barbearia.model.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoServico;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class AgendamentoService {
@@ -21,10 +24,10 @@ public class AgendamentoService {
     private UserRepository userRepository;
 
     @Transactional
-    public AgendamentoDTO AgendarHorario(AgendamentoDTO agendamentoDTO) {
+    public AgendamentoDTO AgendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
         // Lógica para agendar um horário
         Agendamento entity = new Agendamento();
-        copyDTOtoEntity(agendamentoDTO, entity);
+        copyDTOtoEntity(agendamentoMinDTO, entity);
 
         entity = agendamentoRepository.save(entity);
 
@@ -33,18 +36,30 @@ public class AgendamentoService {
         return new AgendamentoDTO(entity);
     }
 
-    private void copyDTOtoEntity(AgendamentoDTO DTO, Agendamento entity) {
-        entity.setServico(DTO.getServico());
-        entity.setDataHora(DTO.getDataHora());
+    private LocalDateTime calcularFimAtendimento(LocalDateTime inicio, Set<TipoServico> servico) {
 
-        User cliente = userRepository.findByEmail(DTO.getCliente());
+        int tempototal = servico.stream().mapToInt(TipoServico::getDuracaoMinutos).sum();
+
+
+        return inicio.plusMinutes(tempototal);
+    }
+
+    private void copyDTOtoEntity(AgendamentoMinDTO DTO, Agendamento entity) {
+        entity.setServico(DTO.getServico());
+        entity.setAtendimentoInicio(DTO.getAtendimentoInicio());
+
+        //Calculando horário do fim do atendimento para criar a entity
+        LocalDateTime atendimentoFim = calcularFimAtendimento(DTO.getAtendimentoInicio(), DTO.getServico());
+        entity.setAtendimentoFim(atendimentoFim);
+
+        User cliente = userRepository.findByEmail(DTO.getClienteEmail());
         if (cliente == null) {
-            throw new IllegalArgumentException("Cliente não encontrado: " + DTO.getCliente());
+            throw new IllegalArgumentException("Cliente não encontrado: " + DTO.getClienteEmail());
         }
 
-        User atendente = userRepository.findByEmail(DTO.getAtendente());
+        User atendente = userRepository.findByEmail(DTO.getAtendenteEmail());
         if (atendente == null) {
-            throw new IllegalArgumentException("Atendente não encontrado: " + DTO.getAtendente());
+            throw new IllegalArgumentException("Atendente não encontrado: " + DTO.getAtendenteEmail());
         }
 
         entity.setCliente(cliente);

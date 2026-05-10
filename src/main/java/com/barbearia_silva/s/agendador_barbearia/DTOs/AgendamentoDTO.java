@@ -1,14 +1,14 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
-import com.barbearia_silva.s.agendador_barbearia.entities.Agendamento;
-import com.barbearia_silva.s.agendador_barbearia.entities.TipoUsuario;
-import com.barbearia_silva.s.agendador_barbearia.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.model.entities.Agendamento;
+import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoServico;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,16 +16,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AgendamentoDTO {
     private Long id;
-    private LocalDateTime dataHora;
-    private String servico;
-    private String cliente;
-    private String atendente;
+    private LocalDateTime atendimentoInicio;
+    private LocalDateTime atendimentoFim;
+    private Set<TipoServico> servico;
+    private UserDTO cliente;
+    private UserDTO atendente;
 
     public AgendamentoDTO(Agendamento entity) {
         id = entity.getId();
-        dataHora = entity.getDataHora();
+        atendimentoInicio = entity.getAtendimentoInicio();
+        atendimentoFim = entity.getAtendimentoFim();
         servico = entity.getServico();
-        cliente = entity.getCliente().getEmail();
-        atendente = entity.getAtendente().getEmail();
+        cliente = new UserDTO(entity.getCliente());
+        atendente = new UserDTO(entity.getAtendente());
     }
 }

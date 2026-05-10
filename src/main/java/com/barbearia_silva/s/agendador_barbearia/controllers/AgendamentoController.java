@@ -1,6 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.controllers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
 import com.barbearia_silva.s.agendador_barbearia.services.AgendamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,10 @@ public class AgendamentoController {
     private AgendamentoService agendamentoService;
 
     @PostMapping
-    public ResponseEntity<AgendamentoDTO> AgendarHorario(@RequestBody AgendamentoDTO dto) {
-        dto = agendamentoService.AgendarHorario(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{agendamento}")
-                .buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+    public ResponseEntity<AgendamentoDTO> AgendarHorario(@RequestBody AgendamentoMinDTO agendamentoMinDTO) {
+        AgendamentoDTO resultado = agendamentoService.AgendarHorario(agendamentoMinDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(resultado.getId()).toUri();
+        return ResponseEntity.created(uri).body(resultado);
     }
 }

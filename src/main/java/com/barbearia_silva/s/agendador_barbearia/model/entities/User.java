@@ -1,4 +1,4 @@
-package com.barbearia_silva.s.agendador_barbearia.entities;
+package com.barbearia_silva.s.agendador_barbearia.model.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
