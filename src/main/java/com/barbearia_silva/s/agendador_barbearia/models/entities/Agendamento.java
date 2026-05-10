@@ -1,6 +1,6 @@
-package com.barbearia_silva.s.agendador_barbearia.model.entities;
+package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
-import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -27,7 +26,7 @@ public class Agendamento {
 
     private LocalDateTime atendimentoFim;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "cliente_id")
     private User cliente;
 

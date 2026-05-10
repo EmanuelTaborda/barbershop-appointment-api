@@ -1,4 +1,4 @@
-package com.barbearia_silva.s.agendador_barbearia.model.enums;
+package com.barbearia_silva.s.agendador_barbearia.models.enums;
 
 public enum TipoUsuario {
     ROLE_CLIENTE,

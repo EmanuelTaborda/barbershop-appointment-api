@@ -2,9 +2,10 @@ package com.barbearia_silva.s.agendador_barbearia.services;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
-import com.barbearia_silva.s.agendador_barbearia.model.entities.Agendamento;
-import com.barbearia_silva.s.agendador_barbearia.model.entities.User;
-import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -29,9 +31,18 @@ public class AgendamentoService {
         Agendamento entity = new Agendamento();
         copyDTOtoEntity(agendamentoMinDTO, entity);
 
-        entity = agendamentoRepository.save(entity);
-
         // Verificar disponibilidade do barbeiro, criar o agendamento e salvar no banco de dados
+        List<Agendamento> conflitos = agendamentoRepository.findConflitosAgendamento(
+                entity.getAtendente(),
+                entity.getAtendimentoInicio(),
+                entity.getAtendimentoFim()
+        );
+
+        if (!conflitos.isEmpty()) {
+            throw new ConflitoDeAgendamentoException("O atendente já possui um agendamento nesse horário.");
+        } else {
+            entity = agendamentoRepository.save(entity);
+        }
 
         return new AgendamentoDTO(entity);
     }

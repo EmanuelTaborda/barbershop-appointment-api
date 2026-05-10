@@ -1,7 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
-import com.barbearia_silva.s.agendador_barbearia.model.entities.Agendamento;
-import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

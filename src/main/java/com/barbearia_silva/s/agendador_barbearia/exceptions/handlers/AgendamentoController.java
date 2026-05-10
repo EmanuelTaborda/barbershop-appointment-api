@@ -1,4 +1,4 @@
-package com.barbearia_silva.s.agendador_barbearia.controllers;
+package com.barbearia_silva.s.agendador_barbearia.exceptions.handlers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;

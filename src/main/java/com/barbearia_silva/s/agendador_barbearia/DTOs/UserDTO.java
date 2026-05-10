@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
-import com.barbearia_silva.s.agendador_barbearia.model.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

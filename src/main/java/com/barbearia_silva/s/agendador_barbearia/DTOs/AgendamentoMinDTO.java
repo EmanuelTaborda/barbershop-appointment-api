@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
-import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

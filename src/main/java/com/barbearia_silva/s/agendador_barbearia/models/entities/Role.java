@@ -1,6 +1,6 @@
-package com.barbearia_silva.s.agendador_barbearia.model.entities;
+package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
-import com.barbearia_silva.s.agendador_barbearia.model.enums.TipoUsuario;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
