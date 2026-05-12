@@ -11,8 +11,10 @@ import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.barbearia_silva.s.agendador_barbearia.config.RegrasBarbearia;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +33,9 @@ public class AgendamentoService {
         Agendamento entity = new Agendamento();
         copyDTOtoEntity(agendamentoMinDTO, entity);
 
+        //Verificar conflito com horário de almoço
+        validarHorarioDeAlmoco(entity);
+
         // Verificar disponibilidade do barbeiro, criar o agendamento e salvar no banco de dados
         List<Agendamento> conflitos = agendamentoRepository.findConflitosAgendamento(
                 entity.getAtendente(),
@@ -39,7 +44,7 @@ public class AgendamentoService {
         );
 
         if (!conflitos.isEmpty()) {
-            throw new ConflitoDeAgendamentoException("O atendente já possui um agendamento nesse horário.");
+            throw new ConflitoDeAgendamentoException("O barbeiro já possui um agendamento neste horário.");
         } else {
             entity = agendamentoRepository.save(entity);
         }
@@ -51,8 +56,21 @@ public class AgendamentoService {
 
         int tempototal = servico.stream().mapToInt(TipoServico::getDuracaoMinutos).sum();
 
-
         return inicio.plusMinutes(tempototal);
+    }
+
+    //Função para validar se não há conflitos do horário solicitado no DTO com o horário de almoço da barbearia
+    private void validarHorarioDeAlmoco(Agendamento agendamento) {
+        LocalTime inicio = agendamento.getAtendimentoInicio().toLocalTime();
+        LocalTime fim = calcularFimAtendimento(agendamento.getAtendimentoInicio(), agendamento.getServico())
+                .toLocalTime();
+
+        Boolean conflitoAloco = inicio.isBefore(RegrasBarbearia.FINAL_ALMOCO)
+                && fim.isAfter(RegrasBarbearia.INICIO_ALMOCO);
+
+        if (conflitoAloco) {
+            throw new ConflitoDeAgendamentoException("No horário solicitado a Barbearia está fechada para almoço.");
+        }
     }
 
     private void copyDTOtoEntity(AgendamentoMinDTO DTO, Agendamento entity) {
