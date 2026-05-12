@@ -4,15 +4,18 @@ import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.BloqueioAgenda;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
+import com.barbearia_silva.s.agendador_barbearia.repositories.BloqueioAgendaRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.barbearia_silva.s.agendador_barbearia.config.RegrasBarbearia;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -27,23 +30,38 @@ public class AgendamentoService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BloqueioAgendaRepository bloqueioAgendaRepository;
+
     @Transactional
     public AgendamentoDTO AgendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
         // Lógica para agendar um horário
         Agendamento entity = new Agendamento();
         copyDTOtoEntity(agendamentoMinDTO, entity);
 
+        //Verificar conflito com dia de domingo
+        if (entity.getAtendimentoInicio().getDayOfWeek()== DayOfWeek.SUNDAY) {
+            throw new ConflitoDeAgendamentoException("A Barbearia não possui expediente aos domingos.");
+        }
+
+        //Verificar conflito com bloqueios
+        List<BloqueioAgenda> conflitosBloqueioAgenda = bloqueioAgendaRepository.findConflitosBloqueioAgenda(entity.getBarbeiro(), entity.getAtendimentoInicio(),
+                entity.getAtendimentoFim());
+        if (!conflitosBloqueioAgenda.isEmpty()) {
+            throw new ConflitoDeAgendamentoException("O horário solicitado não está disponivél para agendamento.");
+        }
+
         //Verificar conflito com horário de almoço
         validarHorarioDeAlmoco(entity);
 
-        // Verificar disponibilidade do barbeiro, criar o agendamento e salvar no banco de dados
-        List<Agendamento> conflitos = agendamentoRepository.findConflitosAgendamento(
-                entity.getAtendente(),
+        // Verificar disponibilidade do barbeiro
+        List<Agendamento> conflitosAgendamento = agendamentoRepository.findConflitosAgendamento(
+                entity.getBarbeiro(),
                 entity.getAtendimentoInicio(),
                 entity.getAtendimentoFim()
         );
 
-        if (!conflitos.isEmpty()) {
+        if (!conflitosAgendamento.isEmpty()) {
             throw new ConflitoDeAgendamentoException("O barbeiro já possui um agendamento neste horário.");
         } else {
             entity = agendamentoRepository.save(entity);
@@ -86,12 +104,12 @@ public class AgendamentoService {
             throw new IllegalArgumentException("Cliente não encontrado: " + DTO.getClienteEmail());
         }
 
-        User atendente = userRepository.findByEmail(DTO.getAtendenteEmail());
-        if (atendente == null) {
-            throw new IllegalArgumentException("Atendente não encontrado: " + DTO.getAtendenteEmail());
+        User barbeiro = userRepository.findByEmail(DTO.getBarbeiroEmail());
+        if (barbeiro == null) {
+            throw new IllegalArgumentException("Barbeiro não encontrado: " + DTO.getBarbeiroEmail());
         }
 
         entity.setCliente(cliente);
-        entity.setAtendente(atendente);
+        entity.setBarbeiro(barbeiro);
     }
 }

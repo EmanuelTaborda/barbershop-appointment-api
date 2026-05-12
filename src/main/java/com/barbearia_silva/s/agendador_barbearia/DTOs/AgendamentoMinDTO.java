@@ -28,5 +28,5 @@ public class AgendamentoMinDTO {
     private String clienteEmail;
 
     @NotBlank(message = "Email do atendente é obrigatório")
-    private String atendenteEmail;
+    private String barbeiroEmail;
 }

@@ -20,7 +20,7 @@ public class AgendamentoDTO {
     private LocalDateTime atendimentoFim;
     private Set<TipoServico> servico;
     private UserDTO cliente;
-    private UserDTO atendente;
+    private UserDTO barbeiro;
 
     public AgendamentoDTO(Agendamento entity) {
         id = entity.getId();
@@ -28,6 +28,6 @@ public class AgendamentoDTO {
         atendimentoFim = entity.getAtendimentoFim();
         servico = entity.getServico();
         cliente = new UserDTO(entity.getCliente());
-        atendente = new UserDTO(entity.getAtendente());
+        barbeiro = new UserDTO(entity.getBarbeiro());
     }
 }

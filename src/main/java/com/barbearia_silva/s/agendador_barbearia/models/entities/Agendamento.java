@@ -32,7 +32,7 @@ public class Agendamento {
 
     @ManyToOne
     @JoinColumn(name = "barbeiro_id")
-    private User atendente;
+    private User barbeiro;
 
     @ElementCollection(targetClass = TipoServico.class)
     @Enumerated(EnumType.STRING)
