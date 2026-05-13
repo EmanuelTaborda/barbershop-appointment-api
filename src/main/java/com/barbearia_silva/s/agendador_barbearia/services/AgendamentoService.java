@@ -7,6 +7,7 @@ import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.BloqueioAgenda;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.BloqueioAgendaRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
@@ -35,37 +36,16 @@ public class AgendamentoService {
 
     @Transactional
     public AgendamentoDTO AgendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
-        // Lógica para agendar um horário
         Agendamento entity = new Agendamento();
         copyDTOtoEntity(agendamentoMinDTO, entity);
 
-        //Verificar conflito com dia de domingo
-        if (entity.getAtendimentoInicio().getDayOfWeek()== DayOfWeek.SUNDAY) {
-            throw new ConflitoDeAgendamentoException("A Barbearia não possui expediente aos domingos.");
-        }
+        validarBarbeiro(entity);
+        validarDataAgendamento(entity);
+        validarHorarioDeFuncionamento(entity);
+        validarConflitosComBloqueios(entity);
+        validarConflitoDeAgendamentos(entity);
 
-        //Verificar conflito com bloqueios
-        List<BloqueioAgenda> conflitosBloqueioAgenda = bloqueioAgendaRepository.findConflitosBloqueioAgenda(entity.getBarbeiro(), entity.getAtendimentoInicio(),
-                entity.getAtendimentoFim());
-        if (!conflitosBloqueioAgenda.isEmpty()) {
-            throw new ConflitoDeAgendamentoException("O horário solicitado não está disponivél para agendamento.");
-        }
-
-        //Verificar conflito com horário de almoço
-        validarHorarioDeAlmoco(entity);
-
-        // Verificar disponibilidade do barbeiro
-        List<Agendamento> conflitosAgendamento = agendamentoRepository.findConflitosAgendamento(
-                entity.getBarbeiro(),
-                entity.getAtendimentoInicio(),
-                entity.getAtendimentoFim()
-        );
-
-        if (!conflitosAgendamento.isEmpty()) {
-            throw new ConflitoDeAgendamentoException("O barbeiro já possui um agendamento neste horário.");
-        } else {
-            entity = agendamentoRepository.save(entity);
-        }
+        entity = agendamentoRepository.save(entity);
 
         return new AgendamentoDTO(entity);
     }
@@ -77,17 +57,79 @@ public class AgendamentoService {
         return inicio.plusMinutes(tempototal);
     }
 
-    //Função para validar se não há conflitos do horário solicitado no DTO com o horário de almoço da barbearia
-    private void validarHorarioDeAlmoco(Agendamento agendamento) {
+    //Verificar User Barbeiro
+    private void validarBarbeiro(Agendamento agendamento) {
+        if (!agendamento.getBarbeiro().getRoles().stream().anyMatch(role -> role.getAuthority().equals(TipoUsuario.ROLE_BARBEIRO))) {
+            throw new IllegalArgumentException("O usuário selecionado como barbeiro é inválido.");
+        }
+    }
+
+    //Verificação se o atendimento solicitado não é no passado e limitando o agendamento para no máximo dois meses de antecedência
+    private void validarDataAgendamento(Agendamento agendamento) {
+        LocalDateTime agora = LocalDateTime.now();
+
+        if (agendamento.getAtendimentoInicio().isBefore(agora)) {
+            throw new ConflitoDeAgendamentoException("Não é possível agendar para datas no passado.");
+        }
+
+        if (agendamento.getAtendimentoInicio().isAfter(agora.plusMonths(2))) {
+            throw new ConflitoDeAgendamentoException("Agendamentos limitados a 2 meses de antecedência.");
+        }
+    }
+
+    //Função para validar se não há conflitos do horário solicitado no DTO com o horário de funcionamento da barbearia
+    private void validarHorarioDeFuncionamento(Agendamento agendamento) {
         LocalTime inicio = agendamento.getAtendimentoInicio().toLocalTime();
         LocalTime fim = calcularFimAtendimento(agendamento.getAtendimentoInicio(), agendamento.getServico())
                 .toLocalTime();
 
-        Boolean conflitoAloco = inicio.isBefore(RegrasBarbearia.FINAL_ALMOCO)
-                && fim.isAfter(RegrasBarbearia.INICIO_ALMOCO);
+        //Verificar conflito com dia de domingo
+        if (agendamento.getAtendimentoInicio().getDayOfWeek()== DayOfWeek.SUNDAY) {
+            throw new ConflitoDeAgendamentoException("A Barbearia não possui expediente aos domingos.");
+        }
 
-        if (conflitoAloco) {
-            throw new ConflitoDeAgendamentoException("No horário solicitado a Barbearia está fechada para almoço.");
+        //Verificar conflito com horário de almoço
+        Boolean conflitoAlmoco = inicio.isBefore(RegrasBarbearia.FINAL_ALMOCO)
+                && fim.isAfter(RegrasBarbearia.INICIO_ALMOCO);
+        if (conflitoAlmoco) {
+            throw new ConflitoDeAgendamentoException("No horário solicitado a Barbearia estará fechada para almoço.");
+        }
+
+        //Verificar conflito com horário de funcionamento
+        boolean conflitoFuncionamento = inicio.isBefore(RegrasBarbearia.ABERTURA)
+                || inicio.isAfter(RegrasBarbearia.FECHAMENTO);
+        if (conflitoFuncionamento) {
+            throw new ConflitoDeAgendamentoException("No horário solicitado a Barbearia estará fechada.");
+        }
+
+        //Verifica se o serviço solicitado não temrina após fechamento da barbearia
+        if (fim.isAfter(RegrasBarbearia.FECHAMENTO)) {
+            throw new ConflitoDeAgendamentoException(
+                    "Devido ao tempo para realizar seu atendimento, ele precisa iniciar antes, selecione outro horário."
+            );
+        }
+    }
+
+    //Verificar conflito com bloqueios
+    private void validarConflitosComBloqueios(Agendamento agendamento) {
+        List<BloqueioAgenda> conflitosBloqueioAgenda = bloqueioAgendaRepository.findConflitosBloqueioAgenda(
+                agendamento.getBarbeiro(), agendamento.getAtendimentoInicio(),
+                agendamento.getAtendimentoFim());
+        if (!conflitosBloqueioAgenda.isEmpty()) {
+            throw new ConflitoDeAgendamentoException("O horário solicitado não está disponivél para agendamento.");
+        }
+    }
+
+    // Verificar disponibilidade do barbeiro
+    private void validarConflitoDeAgendamentos(Agendamento agendamento) {
+        List<Agendamento> conflitosAgendamento = agendamentoRepository.findConflitosAgendamento(
+                agendamento.getBarbeiro(),
+                agendamento.getAtendimentoInicio(),
+                agendamento.getAtendimentoFim()
+        );
+
+        if (!conflitosAgendamento.isEmpty()) {
+            throw new ConflitoDeAgendamentoException("O barbeiro já possui um agendamento neste horário.");
         }
     }
 

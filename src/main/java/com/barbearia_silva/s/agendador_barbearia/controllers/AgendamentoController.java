@@ -1,8 +1,9 @@
-package com.barbearia_silva.s.agendador_barbearia.exceptions.handlers;
+package com.barbearia_silva.s.agendador_barbearia.controllers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
 import com.barbearia_silva.s.agendador_barbearia.services.AgendamentoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class AgendamentoController {
     private AgendamentoService agendamentoService;
 
     @PostMapping
-    public ResponseEntity<AgendamentoDTO> AgendarHorario(@RequestBody AgendamentoMinDTO agendamentoMinDTO) {
+    public ResponseEntity<AgendamentoDTO> AgendarHorario(@Valid @RequestBody AgendamentoMinDTO agendamentoMinDTO) {
         AgendamentoDTO resultado = agendamentoService.AgendarHorario(agendamentoMinDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(resultado.getId()).toUri();
