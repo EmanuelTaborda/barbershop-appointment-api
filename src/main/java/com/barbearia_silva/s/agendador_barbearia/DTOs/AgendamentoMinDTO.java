@@ -20,6 +20,7 @@ import java.util.Set;
 public class AgendamentoMinDTO {
 
     @NotNull(message = "Hora de inicio é obrigatória")
+    @FutureOrPresent(message = "Hora de inicio deve ser no presente ou futuro")
     private LocalDateTime atendimentoInicio;
 
     @NotEmpty(message = "Deve conter ao menos um servico")

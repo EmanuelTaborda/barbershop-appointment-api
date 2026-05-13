@@ -68,10 +68,6 @@ public class AgendamentoService {
     private void validarDataAgendamento(Agendamento agendamento) {
         LocalDateTime agora = LocalDateTime.now();
 
-        if (agendamento.getAtendimentoInicio().isBefore(agora)) {
-            throw new ConflitoDeAgendamentoException("Não é possível agendar para datas no passado.");
-        }
-
         if (agendamento.getAtendimentoInicio().isAfter(agora.plusMonths(2))) {
             throw new ConflitoDeAgendamentoException("Agendamentos limitados a 2 meses de antecedência.");
         }
