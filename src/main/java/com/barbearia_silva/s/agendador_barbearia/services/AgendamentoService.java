@@ -2,19 +2,22 @@ package com.barbearia_silva.s.agendador_barbearia.services;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoReponseDTO;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.BloqueioAgenda;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.StatusAgendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
+import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoProjection;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.BloqueioAgendaRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.barbearia_silva.s.agendador_barbearia.config.RegrasBarbearia;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -34,8 +37,17 @@ public class AgendamentoService {
     @Autowired
     private BloqueioAgendaRepository bloqueioAgendaRepository;
 
+    @Transactional(readOnly = true)
+    public List<AgendamentoProjection> findApointmentsByCLientId(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
+        //Recebe cada entity da consulta e transforma em DTO
+        List<AgendamentoProjection> agendamentos = agendamentoRepository.findByCliente(user);
+
+        return agendamentos;
+    }
+
     @Transactional
-    public AgendamentoDTO AgendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
+    public AgendamentoReponseDTO AgendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
         Agendamento entity = new Agendamento();
         copyDTOtoEntity(agendamentoMinDTO, entity);
 
@@ -47,7 +59,7 @@ public class AgendamentoService {
 
         entity = agendamentoRepository.save(entity);
 
-        return new AgendamentoDTO(entity);
+        return new AgendamentoReponseDTO(entity);
     }
 
     private LocalDateTime calcularFimAtendimento(LocalDateTime inicio, Set<TipoServico> servico) {
@@ -149,5 +161,6 @@ public class AgendamentoService {
 
         entity.setCliente(cliente);
         entity.setBarbeiro(barbeiro);
+        entity.setStatus(StatusAgendamento.AGENDADO);
     }
 }

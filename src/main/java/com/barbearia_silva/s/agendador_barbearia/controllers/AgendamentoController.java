@@ -2,17 +2,17 @@ package com.barbearia_silva.s.agendador_barbearia.controllers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoReponseDTO;
+import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoProjection;
 import com.barbearia_silva.s.agendador_barbearia.services.AgendamentoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/agendamento")
@@ -21,11 +21,16 @@ public class AgendamentoController {
     @Autowired
     private AgendamentoService agendamentoService;
 
+    @GetMapping(value = "/cliente/{id}")
+    public ResponseEntity<List<AgendamentoProjection>> getByCLientId(@PathVariable Long id){
+        List<AgendamentoProjection> resultado = agendamentoService.findApointmentsByCLientId(id);
+        return ResponseEntity.ok(resultado);
+    }
+
     @PostMapping
-    public ResponseEntity<AgendamentoDTO> AgendarHorario(@Valid @RequestBody AgendamentoMinDTO agendamentoMinDTO) {
-        AgendamentoDTO resultado = agendamentoService.AgendarHorario(agendamentoMinDTO);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(resultado.getId()).toUri();
+    public ResponseEntity<AgendamentoReponseDTO> AgendarHorario(@Valid @RequestBody AgendamentoMinDTO agendamentoMinDTO) {
+        AgendamentoReponseDTO resultado = agendamentoService.AgendarHorario(agendamentoMinDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(uri).body(resultado);
     }
 }

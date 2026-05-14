@@ -2,6 +2,7 @@ package com.barbearia_silva.s.agendador_barbearia.repositories;
 
 import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,6 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
             @Param("inicioSolicitado") LocalDateTime inicioSolicitado,
             @Param("fimSolicitado") LocalDateTime fimSolicitado
     );
+
+    List<AgendamentoProjection> findByCliente(User cliente);
 }

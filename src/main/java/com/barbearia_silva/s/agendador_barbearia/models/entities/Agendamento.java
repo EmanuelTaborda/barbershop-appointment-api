@@ -1,5 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
+import com.barbearia_silva.s.agendador_barbearia.models.enums.StatusAgendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,8 +35,10 @@ public class Agendamento {
     @JoinColumn(name = "barbeiro_id")
     private User barbeiro;
 
-    @ElementCollection(targetClass = TipoServico.class)
+    @ElementCollection(targetClass = TipoServico.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<TipoServico> servico;
 
+    @Enumerated(EnumType.STRING)
+    private StatusAgendamento status;
 }

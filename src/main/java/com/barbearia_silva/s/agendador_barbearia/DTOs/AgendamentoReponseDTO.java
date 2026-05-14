@@ -15,22 +15,17 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AgendamentoDTO {
-    private Long id;
+public class AgendamentoReponseDTO {
+
     private LocalDateTime atendimentoInicio;
-    private LocalDateTime atendimentoFim;
     private Set<TipoServico> servico;
-    private UserDTO cliente;
-    private UserDTO barbeiro;
+    private String nomeBarbeiro;
     private StatusAgendamento status;
 
-    public AgendamentoDTO(Agendamento entity) {
-        id = entity.getId();
+    public AgendamentoReponseDTO(Agendamento entity) {
         atendimentoInicio = entity.getAtendimentoInicio();
-        atendimentoFim = entity.getAtendimentoFim();
         servico = entity.getServico();
-        cliente = new UserDTO(entity.getCliente());
-        barbeiro = new UserDTO(entity.getBarbeiro());
+        nomeBarbeiro = entity.getBarbeiro().getNome();
         status = entity.getStatus();
     }
 }
