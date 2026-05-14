@@ -12,12 +12,14 @@ import java.util.List;
 
 public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
 
-    //Consulta para verificar se não existem conflitos na agenda do atendente
+    //Consulta para verificar se não existem conflitos na agenda do barbeiro
     @Query("SELECT a FROM Agendamento a WHERE a.barbeiro = :barbeiro " +
+            "AND (:agendamentoId IS NULL OR a.id <> :agendamentoId) " +
             "AND a.atendimentoInicio < :fimSolicitado " +
             "AND a.atendimentoFim > :inicioSolicitado")
     List<Agendamento> findConflitosAgendamento(
             @Param("barbeiro") User barbeiro,
+            @Param("agendamentoId") Long agendamentoId,
             @Param("inicioSolicitado") LocalDateTime inicioSolicitado,
             @Param("fimSolicitado") LocalDateTime fimSolicitado
     );

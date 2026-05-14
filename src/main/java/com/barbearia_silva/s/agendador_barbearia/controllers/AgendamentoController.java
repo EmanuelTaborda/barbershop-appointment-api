@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.controllers;
 
-import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoDTO;
+
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoReponseDTO;
 import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoProjection;
@@ -29,8 +29,17 @@ public class AgendamentoController {
 
     @PostMapping
     public ResponseEntity<AgendamentoReponseDTO> AgendarHorario(@Valid @RequestBody AgendamentoMinDTO agendamentoMinDTO) {
-        AgendamentoReponseDTO resultado = agendamentoService.AgendarHorario(agendamentoMinDTO);
+        AgendamentoReponseDTO resultado = agendamentoService.agendarHorario(agendamentoMinDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(uri).body(resultado);
     }
+
+    @PutMapping(value = "/atualizar/{id}")
+    public ResponseEntity<AgendamentoReponseDTO> atuzalizaragendamento(
+            @PathVariable Long id, @Valid @RequestBody AgendamentoMinDTO agendamentoMinDTO){
+        AgendamentoReponseDTO resultado = agendamentoService.atualizarAgendamento(id, agendamentoMinDTO);
+        return ResponseEntity.ok(resultado);
+    }
+
+
 }

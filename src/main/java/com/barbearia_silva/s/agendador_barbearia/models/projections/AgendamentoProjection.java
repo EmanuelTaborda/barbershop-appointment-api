@@ -10,6 +10,8 @@ import java.util.Set;
 
 public interface AgendamentoProjection {
 
+    Long getId();
+
     LocalDateTime getAtendimentoInicio();
 
     Set<TipoServico> getServico();

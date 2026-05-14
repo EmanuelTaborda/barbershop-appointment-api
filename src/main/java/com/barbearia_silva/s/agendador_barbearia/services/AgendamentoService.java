@@ -47,7 +47,7 @@ public class AgendamentoService {
     }
 
     @Transactional
-    public AgendamentoReponseDTO AgendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
+    public AgendamentoReponseDTO agendarHorario(AgendamentoMinDTO agendamentoMinDTO) {
         Agendamento entity = new Agendamento();
         copyDTOtoEntity(agendamentoMinDTO, entity);
 
@@ -60,6 +60,30 @@ public class AgendamentoService {
         entity = agendamentoRepository.save(entity);
 
         return new AgendamentoReponseDTO(entity);
+    }
+
+    @Transactional
+    public AgendamentoReponseDTO atualizarAgendamento(Long id, AgendamentoMinDTO agendamentoMinDTO){
+        try {
+            Agendamento entity = agendamentoRepository.getReferenceById(id);
+            if (!entity.getCliente().getEmail().equals(agendamentoMinDTO.getClienteEmail())) {
+                throw new ConflitoDeAgendamentoException("Atuzalização de um agendamento deve ser feita pelo cliente " +
+                        "que o agendou primeiramente.");
+            }
+            copyDTOtoEntity(agendamentoMinDTO, entity);
+
+            validarBarbeiro(entity);
+            validarDataAgendamento(entity);
+            validarHorarioDeFuncionamento(entity);
+            validarConflitosComBloqueios(entity);
+            validarConflitoDeAgendamentos(entity);
+
+            entity = agendamentoRepository.save(entity);
+
+            return new AgendamentoReponseDTO(entity);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Erro ao atualizar o agendamento: " + e.getMessage());
+        }
     }
 
     private LocalDateTime calcularFimAtendimento(LocalDateTime inicio, Set<TipoServico> servico) {
@@ -132,6 +156,7 @@ public class AgendamentoService {
     private void validarConflitoDeAgendamentos(Agendamento agendamento) {
         List<Agendamento> conflitosAgendamento = agendamentoRepository.findConflitosAgendamento(
                 agendamento.getBarbeiro(),
+                agendamento.getId(),
                 agendamento.getAtendimentoInicio(),
                 agendamento.getAtendimentoFim()
         );
