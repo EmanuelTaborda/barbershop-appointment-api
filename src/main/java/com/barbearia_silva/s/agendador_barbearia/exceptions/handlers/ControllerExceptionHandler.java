@@ -24,7 +24,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<CustomErrorDTO> ConflitoUser(IllegalArgumentException e, HttpServletRequest request) {
+    public ResponseEntity<CustomErrorDTO> IllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomErrorDTO err = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
