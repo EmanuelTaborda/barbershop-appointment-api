@@ -43,7 +43,8 @@ public class ValidacaoAgendamentoService {
 
     //Verificar User Barbeiro
     private void validarBarbeiro(Agendamento agendamento) {
-        if (!agendamento.getBarbeiro().getRoles().stream().anyMatch(role -> role.getAuthority().equals(TipoUsuario.ROLE_BARBEIRO))) {
+        if (!agendamento.getBarbeiro().getRoles().stream()
+                .anyMatch(role -> role.getAuthority().equals(TipoUsuario.ROLE_BARBEIRO))) {
             throw new IllegalArgumentException("O usuário selecionado como barbeiro é inválido.");
         }
     }

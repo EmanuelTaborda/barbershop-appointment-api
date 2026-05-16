@@ -57,9 +57,9 @@ public class AgendamentoService {
     @Transactional
     public AgendamentoReponseDTO atualizarAgendamento(Long id, AgendamentoMinDTO agendamentoMinDTO){
             Agendamento entity = agendamentoRepository.getReferenceById(id);
-            if (!entity.getCliente().getEmail().equals(agendamentoMinDTO.getClienteEmail())) {
-                throw new ConflitoDeAgendamentoException("Atuzalização de um agendamento deve ser feita pelo cliente " +
-                        "que o agendou primeiramente.");
+            if (!entity.getCliente().getEmail().equals(agendamentoMinDTO.getClienteEmail())
+                    && !entity.getBarbeiro().getEmail().equals(agendamentoMinDTO.getBarbeiroEmail())) {
+                throw new ConflitoDeAgendamentoException("Você não tem permissão para realizar este reagendamento.");
             }
             copyDTOtoEntity(agendamentoMinDTO, entity);
 
