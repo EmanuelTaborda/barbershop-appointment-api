@@ -3,6 +3,8 @@ package com.barbearia_silva.s.agendador_barbearia.exceptions.handlers;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.CustomErrorDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.ValidationErrorDTO;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
+import com.barbearia_silva.s.agendador_barbearia.exceptions.DatabaseException;
+import com.barbearia_silva.s.agendador_barbearia.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +41,20 @@ public class ControllerExceptionHandler {
         }
         return ResponseEntity.status(status).body(err);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<CustomErrorDTO> ResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        CustomErrorDTO err = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<CustomErrorDTO> database(DatabaseException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomErrorDTO err = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
 
 }

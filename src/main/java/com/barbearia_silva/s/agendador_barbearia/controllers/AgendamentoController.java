@@ -34,12 +34,16 @@ public class AgendamentoController {
         return ResponseEntity.created(uri).body(resultado);
     }
 
-    @PutMapping(value = "/atualizar/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<AgendamentoReponseDTO> atuzalizaragendamento(
             @PathVariable Long id, @Valid @RequestBody AgendamentoMinDTO agendamentoMinDTO){
         AgendamentoReponseDTO resultado = agendamentoService.atualizarAgendamento(id, agendamentoMinDTO);
         return ResponseEntity.ok(resultado);
     }
 
-
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> cancelarAgendamento(@PathVariable Long id) {
+        agendamentoService.excluirAgendamento(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -3,6 +3,8 @@ package com.barbearia_silva.s.agendador_barbearia.services;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoReponseDTO;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
+import com.barbearia_silva.s.agendador_barbearia.exceptions.DatabaseException;
+import com.barbearia_silva.s.agendador_barbearia.exceptions.ResourceNotFoundException;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.StatusAgendamento;
@@ -11,7 +13,9 @@ import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoP
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -64,6 +68,19 @@ public class AgendamentoService {
             entity = agendamentoRepository.save(entity);
 
             return new AgendamentoReponseDTO(entity);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void excluirAgendamento(Long id) {
+        if (!agendamentoRepository.existsById(id)){
+            throw new ResourceNotFoundException("Agendamento não encontrado: " + id);
+        }
+
+        try {
+            agendamentoRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Falha de integridade referencial");
+        }
     }
 
     private LocalDateTime calcularFimAtendimento(LocalDateTime inicio, Set<TipoServico> servico) {
