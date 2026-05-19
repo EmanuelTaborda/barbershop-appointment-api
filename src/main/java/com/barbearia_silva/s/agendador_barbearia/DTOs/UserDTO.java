@@ -36,7 +36,6 @@ public class UserDTO {
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String senha;
 
-    @NotEmpty(message = "O usuário deve ter pelo menos uma role")
     private Set<Role> roles;
 
     public UserDTO(User entity) {
