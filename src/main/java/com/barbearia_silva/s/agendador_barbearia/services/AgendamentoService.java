@@ -9,6 +9,7 @@ import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.StatusAgendamento;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoBarbeiroProjection;
 import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoProjection;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
 import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -81,6 +83,13 @@ public class AgendamentoService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Falha de integridade referencial");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<AgendamentoBarbeiroProjection> findByBarbeiroAndData(Long Id, LocalDate data) {
+        User barbeiro = userRepository.findById(Id).orElseThrow(() -> new ResourceNotFoundException("Barbeiro não encontrado: " + Id));
+        List<AgendamentoBarbeiroProjection> agendamentos = agendamentoRepository.findByBarbeiroAndData(barbeiro.getId(), data);
+        return agendamentos;
     }
 
     private LocalDateTime calcularFimAtendimento(LocalDateTime inicio, Set<TipoServico> servico) {

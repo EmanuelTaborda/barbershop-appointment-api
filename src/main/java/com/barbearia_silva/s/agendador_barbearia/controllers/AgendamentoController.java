@@ -3,6 +3,7 @@ package com.barbearia_silva.s.agendador_barbearia.controllers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoMinDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AgendamentoReponseDTO;
+import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoBarbeiroProjection;
 import com.barbearia_silva.s.agendador_barbearia.models.projections.AgendamentoProjection;
 import com.barbearia_silva.s.agendador_barbearia.services.AgendamentoService;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,5 +47,12 @@ public class AgendamentoController {
     public ResponseEntity<Void> cancelarAgendamento(@PathVariable Long id) {
         agendamentoService.excluirAgendamento(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/barbeiro/{id}")
+    public ResponseEntity<List<AgendamentoBarbeiroProjection>> getAgendamentosDoDia(
+            @PathVariable Long id, @RequestParam(required = true) LocalDate data) {
+        List<AgendamentoBarbeiroProjection> resultado = agendamentoService.findByBarbeiroAndData(id, data);
+        return ResponseEntity.ok(resultado);
     }
 }
