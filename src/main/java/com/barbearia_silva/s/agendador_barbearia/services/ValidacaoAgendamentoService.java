@@ -3,11 +3,11 @@ package com.barbearia_silva.s.agendador_barbearia.services;
 import com.barbearia_silva.s.agendador_barbearia.config.RegrasBarbearia;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
 import com.barbearia_silva.s.agendador_barbearia.models.entities.Agendamento;
-import com.barbearia_silva.s.agendador_barbearia.models.entities.BloqueioAgenda;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.Bloqueio;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
 import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
 import com.barbearia_silva.s.agendador_barbearia.repositories.AgendamentoRepository;
-import com.barbearia_silva.s.agendador_barbearia.repositories.BloqueioAgendaRepository;
+import com.barbearia_silva.s.agendador_barbearia.repositories.BloqueioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class ValidacaoAgendamentoService {
     AgendamentoRepository agendamentoRepository;
 
     @Autowired
-    BloqueioAgendaRepository bloqueioAgendaRepository;
+    BloqueioRepository bloqueioRepository;
 
     public void validarAgendamento(Agendamento agendamento) {
         validarBarbeiro(agendamento);
@@ -93,7 +93,7 @@ public class ValidacaoAgendamentoService {
 
     //Verificar conflito com bloqueios
     private void validarConflitosComBloqueios(Agendamento agendamento) {
-        List<BloqueioAgenda> conflitosBloqueioAgenda = bloqueioAgendaRepository.findConflitosBloqueioAgenda(
+        List<Bloqueio> conflitosBloqueioAgenda = bloqueioRepository.findConflitosBloqueioAgenda(
                 agendamento.getBarbeiro(), agendamento.getAtendimentoInicio(),
                 agendamento.getAtendimentoFim());
         if (!conflitosBloqueioAgenda.isEmpty()) {

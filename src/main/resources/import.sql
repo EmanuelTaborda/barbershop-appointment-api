@@ -7,4 +7,4 @@ INSERT INTO tb_user (nome, email, telefone, senha) VALUES ('Higor', 'higor@gmail
 INSERT INTO tb_user_role (user_id, role_id) VALUES (1, 1);
 INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 2);
 
-INSERT INTO tb_bloqueio_agenda (barbeiro_id, inicio_bloqueio, fim_bloqueio) VALUES (2, '2026-06-12T14:00:00', '2026-06-12T16:00:00');
+INSERT INTO tb_bloqueio (barbeiro_id, inicio_bloqueio, fim_bloqueio) VALUES (2, '2026-06-12T14:00:00', '2026-06-12T16:00:00');
