@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_bloqueio")
-public class Bloqueio {
+public class Block {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Bloqueio {
 
     @ManyToOne
     @JoinColumn(name = "barbeiro_id", nullable = false)
-    private User barbeiro;
-    private LocalDateTime inicioBloqueio;
-    private LocalDateTime fimBloqueio;
+    private User barber;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

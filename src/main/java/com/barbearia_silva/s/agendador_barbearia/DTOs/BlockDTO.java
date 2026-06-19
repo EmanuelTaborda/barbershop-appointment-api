@@ -1,7 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
-import com.barbearia_silva.s.agendador_barbearia.models.entities.Bloqueio;
-import com.barbearia_silva.s.agendador_barbearia.models.entities.User;
+import com.barbearia_silva.s.agendador_barbearia.models.entities.Block;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,25 +14,25 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BloqueioDTO {
+public class BlockDTO {
 
     private Long id;
 
     @NotNull(message = "O barbeiro é obrigatório")
-    private Long idBarbeiro;
+    private Long idBarber;
 
     @NotNull(message = "O início do bloqueio é obrigatório")
     @FutureOrPresent(message = "O início do bloqueio deve ser no presente ou futuro")
-    private LocalDateTime inicioBloqueio;
+    private LocalDateTime startTime;
 
     @NotNull(message = "O fim do bloqueio é obrigatório")
     @FutureOrPresent(message = "Fim do bloqueio deve ser no presente ou futuro")
-    private LocalDateTime fimBloqueio;
+    private LocalDateTime endTime;
 
-    public BloqueioDTO(Bloqueio entity) {
+    public BlockDTO(Block entity) {
         this.id = entity.getId();
-        this.idBarbeiro = entity.getBarbeiro().getId();
-        this.inicioBloqueio = entity.getInicioBloqueio();
-        this.fimBloqueio = entity.getFimBloqueio();
+        this.idBarber = entity.getBarber().getId();
+        this.startTime = entity.getStartTime();
+        this.endTime = entity.getEndTime();
     }
 }

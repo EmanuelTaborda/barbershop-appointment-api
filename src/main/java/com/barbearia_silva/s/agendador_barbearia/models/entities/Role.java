@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
-import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +24,7 @@ public class Role {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoUsuario authority;
+    private UserType authority;
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();

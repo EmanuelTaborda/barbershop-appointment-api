@@ -21,7 +21,7 @@ public class UserDTO {
 
     @NotBlank(message = "O nome é obrigatório")
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
-    private String nome;
+    private String name;
 
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "O email deve ser válido")
@@ -30,20 +30,20 @@ public class UserDTO {
     @NotBlank(message = "O telefone é obrigatório")
     @Pattern(regexp = "^\\(?\\d{2}\\)?\\s?\\d{4,5}-?\\d{4}$",
             message = "O telefone deve estar em um formato válido (ex: (11) 9999-9999)")
-    private String telefone;
+    private String phone;
 
     @NotBlank(message = "A senha é obrigatória")
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
-    private String senha;
+    private String password;
 
     private Set<Role> roles;
 
     public UserDTO(User entity) {
         id = entity.getId();
-        nome = entity.getNome();
+        name = entity.getName();
         email = entity.getEmail();
-        telefone = entity.getTelefone();
-        senha = entity.getSenha();
+        phone = entity.getPhone();
+        password = entity.getPassword();
         roles = entity.getRoles();
     }
 }

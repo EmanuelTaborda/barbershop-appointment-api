@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
-import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.ServiceType;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -17,18 +17,18 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AgendamentoMinDTO {
+public class AppointmentMinDTO {
 
     @NotNull(message = "Hora de inicio é obrigatória")
     @FutureOrPresent(message = "Hora de inicio deve ser no presente ou futuro")
-    private LocalDateTime atendimentoInicio;
+    private LocalDateTime startTime;
 
     @NotEmpty(message = "Deve conter ao menos um servico")
-    private Set<TipoServico> servico;
+    private Set<ServiceType> services;
 
     @NotBlank(message = "Email do cliente é obrigatório")
-    private String clienteEmail;
+    private String clientEmail;
 
     @NotBlank(message = "Email do atendente é obrigatório")
-    private String barbeiroEmail;
+    private String barberEmail;
 }

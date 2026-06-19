@@ -2,7 +2,7 @@ package com.barbearia_silva.s.agendador_barbearia.exceptions.handlers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.CustomErrorDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.ValidationErrorDTO;
-import com.barbearia_silva.s.agendador_barbearia.exceptions.ConflitoDeAgendamentoException;
+import com.barbearia_silva.s.agendador_barbearia.exceptions.AppointmentConflictException;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.DatabaseException;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,8 +18,8 @@ import java.time.Instant;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(ConflitoDeAgendamentoException.class)
-    public ResponseEntity<CustomErrorDTO> ConflitoAgendamento(ConflitoDeAgendamentoException e, HttpServletRequest request) {
+    @ExceptionHandler(AppointmentConflictException.class)
+    public ResponseEntity<CustomErrorDTO> AppointmentConflict(AppointmentConflictException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomErrorDTO err = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);

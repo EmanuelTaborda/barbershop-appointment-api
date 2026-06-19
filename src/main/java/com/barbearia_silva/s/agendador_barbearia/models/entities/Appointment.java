@@ -1,7 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
-import com.barbearia_silva.s.agendador_barbearia.models.enums.StatusAgendamento;
-import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoServico;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.AppointmentStatus;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.ServiceType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,28 +17,28 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_agendamento")
-public class Agendamento {
+public class Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime atendimentoInicio;
+    private LocalDateTime startTime;
 
-    private LocalDateTime atendimentoFim;
+    private LocalDateTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
-    private User cliente;
+    private User client;
 
     @ManyToOne
     @JoinColumn(name = "barbeiro_id")
-    private User barbeiro;
+    private User barber;
 
-    @ElementCollection(targetClass = TipoServico.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = ServiceType.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<TipoServico> servico;
+    private Set<ServiceType> services;
 
     @Enumerated(EnumType.STRING)
-    private StatusAgendamento status;
+    private AppointmentStatus status;
 }

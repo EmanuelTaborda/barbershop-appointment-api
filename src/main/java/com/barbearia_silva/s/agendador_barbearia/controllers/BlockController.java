@@ -1,7 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.controllers;
 
-import com.barbearia_silva.s.agendador_barbearia.DTOs.BloqueioDTO;
-import com.barbearia_silva.s.agendador_barbearia.services.BloqueioService;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.BlockDTO;
+import com.barbearia_silva.s.agendador_barbearia.services.BlockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/bloqueios")
-public class BloqueioController {
+public class BlockController {
 
     @Autowired
-    private BloqueioService bloqueioService;
+    private BlockService blockService;
 
     @PostMapping
-    public ResponseEntity<BloqueioDTO> createBloqueio(@RequestBody BloqueioDTO dto) {
-        BloqueioDTO created = bloqueioService.insert(dto);
+    public ResponseEntity<BlockDTO> createBlock(@RequestBody BlockDTO dto) {
+        BlockDTO created = blockService.insert(dto);
         return ResponseEntity.ok(created);
     }
 }

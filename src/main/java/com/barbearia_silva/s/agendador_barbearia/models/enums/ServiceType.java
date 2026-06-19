@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.models.enums;
 
-public enum TipoServico {
+public enum ServiceType {
 
     CABELO(30),
     BARBA(30),
@@ -8,7 +8,7 @@ public enum TipoServico {
 
     private final int TempoMinutos;
 
-    TipoServico(int TempoMinutos) {
+    ServiceType(int TempoMinutos) {
         this.TempoMinutos = TempoMinutos;
     }
 

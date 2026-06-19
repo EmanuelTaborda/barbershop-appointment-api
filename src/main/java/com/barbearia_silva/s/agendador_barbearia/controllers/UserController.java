@@ -1,7 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.controllers;
 
 import com.barbearia_silva.s.agendador_barbearia.DTOs.UserDTO;
-import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
+import com.barbearia_silva.s.agendador_barbearia.models.enums.UserType;
 import com.barbearia_silva.s.agendador_barbearia.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +22,14 @@ public class UserController {
     @Transactional
     @PostMapping(value = "/cliente")
     public ResponseEntity<UserDTO> insertUserClient(@Valid @RequestBody UserDTO dto){
-        userService.criarUsuario(dto, TipoUsuario.ROLE_CLIENTE);
+        userService.createUser(dto, UserType.ROLE_CLIENT);
         return ResponseEntity.ok().build();
     }
 
     @Transactional
     @PostMapping(value = "/barbeiro")
     public ResponseEntity<UserDTO> insertUserBarber(@Valid @RequestBody UserDTO dto){
-        userService.criarUsuario(dto, TipoUsuario.ROLE_BARBEIRO);
+        userService.createUser(dto, UserType.ROLE_BARBER);
         return ResponseEntity.ok().build();
     }
 }

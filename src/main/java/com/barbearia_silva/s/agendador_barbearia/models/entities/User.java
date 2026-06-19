@@ -1,6 +1,5 @@
 package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
-import com.barbearia_silva.s.agendador_barbearia.models.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,12 +20,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
+    private String name;
 
     @Column(unique = true)
     private String email;
-    private String telefone;
-    private String senha;
+    private String phone;
+    private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
