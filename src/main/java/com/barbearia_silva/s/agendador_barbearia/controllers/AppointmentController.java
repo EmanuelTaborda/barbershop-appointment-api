@@ -1,7 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.controllers;
 
 
-import com.barbearia_silva.s.agendador_barbearia.DTOs.AppointmentMinDTO;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.AppointmentRequestDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AppointmentReponseDTO;
 import com.barbearia_silva.s.agendador_barbearia.models.projections.AppointmentBarberProjection;
 import com.barbearia_silva.s.agendador_barbearia.models.projections.AppointmentProjection;
@@ -30,16 +30,16 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<AppointmentReponseDTO> bookAppointment(@Valid @RequestBody AppointmentMinDTO appointmentMinDTO) {
-        AppointmentReponseDTO result = appointmentService.bookAppointment(appointmentMinDTO);
+    public ResponseEntity<AppointmentReponseDTO> bookAppointment(@Valid @RequestBody AppointmentRequestDTO appointmentRequestDTO) {
+        AppointmentReponseDTO result = appointmentService.bookAppointment(appointmentRequestDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(uri).body(result);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<AppointmentReponseDTO> updateAppointment(
-            @PathVariable Long id, @Valid @RequestBody AppointmentMinDTO appointmentMinDTO){
-        AppointmentReponseDTO result = appointmentService.updateAppointment(id, appointmentMinDTO);
+            @PathVariable Long id, @Valid @RequestBody AppointmentRequestDTO appointmentRequestDTO){
+        AppointmentReponseDTO result = appointmentService.updateAppointment(id, appointmentRequestDTO);
         return ResponseEntity.ok(result);
     }
 

@@ -21,7 +21,7 @@ public class Block {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "barbeiro_id", nullable = false)
+    @JoinColumn(name = "barber_id", nullable = false)
     private User barber;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

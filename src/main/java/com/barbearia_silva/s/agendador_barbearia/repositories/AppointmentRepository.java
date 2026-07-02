@@ -26,6 +26,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("requestedEnd") LocalDateTime requestedEnd
     );
 
+    //Consulta para verificar conflitos de agenda para criar/atualizar bloqueios
+    @Query("SELECT a FROM Appointment a WHERE a.barber = :barber " +
+            "AND a.startTime < :requestedEnd " +
+            "AND a.endTime > :requestedStart")
+    List<Appointment> findAppointmentConflictsforBlocks(
+            @Param("barber") User barbeiro,
+            @Param("requestedStart") LocalDateTime requestedStart,
+            @Param("requestedEnd") LocalDateTime requestedEnd
+    );
+
     List<AppointmentProjection> findByClient(User cliente);
 
     @Query("SELECT a FROM Appointment a WHERE a.barber.id = :barberId " +

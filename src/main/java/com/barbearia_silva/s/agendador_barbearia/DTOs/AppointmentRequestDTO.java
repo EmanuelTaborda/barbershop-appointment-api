@@ -17,7 +17,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppointmentMinDTO {
+public class AppointmentRequestDTO {
 
     @NotNull(message = "Hora de inicio é obrigatória")
     @FutureOrPresent(message = "Hora de inicio deve ser no presente ou futuro")

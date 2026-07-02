@@ -1,6 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.services;
 
-import com.barbearia_silva.s.agendador_barbearia.DTOs.AppointmentMinDTO;
+import com.barbearia_silva.s.agendador_barbearia.DTOs.AppointmentRequestDTO;
 import com.barbearia_silva.s.agendador_barbearia.DTOs.AppointmentReponseDTO;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.AppointmentConflictException;
 import com.barbearia_silva.s.agendador_barbearia.exceptions.DatabaseException;
@@ -49,9 +49,9 @@ public class AppointmentService {
     }
 
     @Transactional
-    public AppointmentReponseDTO bookAppointment(AppointmentMinDTO appointmentMinDTO) {
+    public AppointmentReponseDTO bookAppointment(AppointmentRequestDTO appointmentRequestDTO) {
         Appointment entity = new Appointment();
-        copyDTOtoEntity(appointmentMinDTO, entity);
+        copyDTOtoEntity(appointmentRequestDTO, entity);
 
         validator.validateAppointment(entity);
         entity = appointmentRepository.save(entity);
@@ -60,13 +60,13 @@ public class AppointmentService {
     }
 
     @Transactional
-    public AppointmentReponseDTO updateAppointment(Long id, AppointmentMinDTO appointmentMinDTO){
+    public AppointmentReponseDTO updateAppointment(Long id, AppointmentRequestDTO appointmentRequestDTO){
             Appointment entity = appointmentRepository.getReferenceById(id);
-            if (!entity.getClient().getEmail().equals(appointmentMinDTO.getClientEmail())
-                    && !entity.getBarber().getEmail().equals(appointmentMinDTO.getBarberEmail())) {
+            if (!entity.getClient().getEmail().equals(appointmentRequestDTO.getClientEmail())
+                    && !entity.getBarber().getEmail().equals(appointmentRequestDTO.getBarberEmail())) {
                 throw new AppointmentConflictException("Você não tem permissão para realizar este reagendamento.");
             }
-            copyDTOtoEntity(appointmentMinDTO, entity);
+            copyDTOtoEntity(appointmentRequestDTO, entity);
 
             validator.validateAppointment(entity);
 
@@ -105,7 +105,7 @@ public class AppointmentService {
         return startTime.plusMinutes(totalTime);
     }
 
-    private void copyDTOtoEntity(AppointmentMinDTO DTO, Appointment entity) {
+    private void copyDTOtoEntity(AppointmentRequestDTO DTO, Appointment entity) {
         entity.setServices(DTO.getServices());
         entity.setStartTime(DTO.getStartTime());
 
@@ -125,6 +125,6 @@ public class AppointmentService {
 
         entity.setClient(cliente);
         entity.setBarber(barbeiro);
-        entity.setStatus(AppointmentStatus.SCHEDULED);
+        entity.setStatus(AppointmentStatus.AGENDADO);
     }
 }

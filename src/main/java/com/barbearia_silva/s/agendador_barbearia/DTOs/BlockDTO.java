@@ -1,6 +1,7 @@
 package com.barbearia_silva.s.agendador_barbearia.DTOs;
 
 import com.barbearia_silva.s.agendador_barbearia.models.entities.Block;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,15 @@ public class BlockDTO {
     @NotNull(message = "O fim do bloqueio é obrigatório")
     @FutureOrPresent(message = "Fim do bloqueio deve ser no presente ou futuro")
     private LocalDateTime endTime;
+
+    //Validação para casos de inversão nos valores de inicio e fim do horário do bloqueio
+    @AssertTrue(message = "O horário de início deve ser anterior ao horário de término")
+    public boolean isTimeValid() {
+        if (startTime == null || endTime == null) {
+            return true; // deixa o @NotNull cuidar desse erro, evita NullPointerException aqui
+        }
+        return startTime.isBefore(endTime);
+    }
 
     public BlockDTO(Block entity) {
         this.id = entity.getId();
