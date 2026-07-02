@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -36,7 +37,7 @@ public class UserDTO {
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String password;
 
-    private Set<Role> roles;
+    private Set<RoleDTO> roles = new HashSet<>();
 
     public UserDTO(User entity) {
         id = entity.getId();
@@ -44,6 +45,6 @@ public class UserDTO {
         email = entity.getEmail();
         phone = entity.getPhone();
         password = entity.getPassword();
-        roles = entity.getRoles();
+        entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
     }
 }

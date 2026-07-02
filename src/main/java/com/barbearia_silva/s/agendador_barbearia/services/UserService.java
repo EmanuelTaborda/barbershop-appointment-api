@@ -10,6 +10,7 @@ import com.barbearia_silva.s.agendador_barbearia.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -20,6 +21,7 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Transactional
     public UserDTO createUser(UserDTO dto, UserType userType){
         User entity = new User();
 
@@ -31,7 +33,7 @@ public class UserService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Este email já possui um cadastro vinculado");
         }
-        return dto;
+        return new UserDTO(entity);
     }
 
 
