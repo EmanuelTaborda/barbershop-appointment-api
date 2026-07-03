@@ -1,5 +1,6 @@
 package com.barbearia_silva.s.agendador_barbearia.models.entities;
 
+import com.barbearia_silva.s.agendador_barbearia.models.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,4 +35,13 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    public boolean hasRole(UserType roleName){
+        for (Role role : roles) {
+            if (role.getAuthority().equals(roleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
