@@ -10,6 +10,6 @@ public class RoleDTO {
 
     public RoleDTO(Role entity) {
         this.id = entity.getId();
-        this.authority = entity.getAuthority().name();
+        this.authority = entity.getAuthority().toString();
     }
 }
