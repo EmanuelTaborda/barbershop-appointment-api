@@ -41,13 +41,13 @@ public class ValidationAppointmentService {
         return startTime.plusMinutes(totalTime);
     }
 
-    //Verificar User Barbeiro
-    private void validateBarber(Appointment appointment) {
-        if (!appointment.getBarber().getRoles().stream()
-                .anyMatch(role -> role.getAuthority().equals(UserType.ROLE_BARBER))) {
-            throw new IllegalArgumentException("O usuário selecionado como barbeiro é inválido.");
-        }
-    }
+	//Verificar User Barbeiro
+	private void validateBarber(Appointment appointment) {
+		if (!appointment.getBarber().getRoles().stream()
+				.anyMatch(role -> role.getAuthority().equals(UserType.ROLE_BARBER.name()))) {
+			throw new IllegalArgumentException("O usuário selecionado como barbeiro é inválido.");
+		}
+	}
 
     //Verificação se o atendimento solicitado não é no passado e limitando o agendamento para no máximo dois meses de antecedência
     private void validateDateAdvance(Appointment appointment) {
