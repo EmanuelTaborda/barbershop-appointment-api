@@ -6,6 +6,7 @@ import com.barbershop_appointment_api.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(createdUser);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
     @PostMapping(value = "/barbeiro")
     public ResponseEntity<UserDTO> insertUserBarber(@Valid @RequestBody UserDTO dto){
