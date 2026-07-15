@@ -20,8 +20,8 @@ public class AppointmentDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Set<ServiceType> services;
-    private UserDTO cleint;
-    private UserDTO barber;
+    private NewUserRequestDTO cleint;
+    private NewUserRequestDTO barber;
     private AppointmentStatus status;
 
     public AppointmentDTO(Appointment entity) {
@@ -29,8 +29,8 @@ public class AppointmentDTO {
         startTime = entity.getStartTime();
         endTime = entity.getEndTime();
         services = entity.getServices();
-        cleint = new UserDTO(entity.getClient());
-        barber = new UserDTO(entity.getBarber());
+        cleint = new NewUserRequestDTO(entity.getClient());
+        barber = new NewUserRequestDTO(entity.getBarber());
         status = entity.getStatus();
     }
 }

@@ -1,5 +1,6 @@
 package com.barbershop_appointment_api.services;
 
+import com.barbershop_appointment_api.DTOs.NewUserRequestDTO;
 import com.barbershop_appointment_api.DTOs.UserDTO;
 import com.barbershop_appointment_api.exceptions.DatabaseException;
 import com.barbershop_appointment_api.models.entities.Role;
@@ -10,10 +11,13 @@ import com.barbershop_appointment_api.repositories.RoleRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +36,7 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDTO createUser(UserDTO dto, UserType userType){
+    public NewUserRequestDTO createUser(NewUserRequestDTO dto, UserType userType){
         User entity = new User();
 
         try {
@@ -43,11 +47,11 @@ public class UserService implements UserDetailsService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Este email já possui um cadastro vinculado");
         }
-        return new UserDTO(entity);
+        return new NewUserRequestDTO(entity);
     }
 
 
-    private void copyDTOToEntity(UserDTO dto, User entity){
+    private void copyDTOToEntity(NewUserRequestDTO dto, User entity){
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -70,4 +74,23 @@ public class UserService implements UserDetailsService {
         }
         return user;
     }
+
+    //Buscar usuário baseado no token de login
+    protected User authenticated(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+            String username = jwtPrincipal.getClaim("username");
+            return userRepository.findByEmail(username);
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Email não encontrado");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getMe(){
+        User user = authenticated();
+        return new UserDTO(user);
+    }
+
 }
