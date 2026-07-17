@@ -4,6 +4,7 @@ import com.barbershop_appointment_api.DTOs.CustomErrorDTO;
 import com.barbershop_appointment_api.DTOs.ValidationErrorDTO;
 import com.barbershop_appointment_api.exceptions.AppointmentConflictException;
 import com.barbershop_appointment_api.exceptions.DatabaseException;
+import com.barbershop_appointment_api.exceptions.ForbiddenException;
 import com.barbershop_appointment_api.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -56,5 +57,10 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(err);
     }
 
-
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CustomErrorDTO> forbidden(ForbiddenException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        CustomErrorDTO err = new CustomErrorDTO(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
 }

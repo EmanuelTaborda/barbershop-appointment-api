@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_agendamento")
-public class Appointment {
+public class  Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
