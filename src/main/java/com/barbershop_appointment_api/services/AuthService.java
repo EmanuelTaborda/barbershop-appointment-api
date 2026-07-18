@@ -18,4 +18,11 @@ public class AuthService {
             throw new ForbiddenException("Acesso negado");
         };
     }
+
+    public void validateSelfOrAdminOrBarber(Long id) {
+        User user = userService.authenticated();
+        if (!user.hasRole(UserType.ROLE_ADMIN) && !user.hasRole(UserType.ROLE_BARBER) && !user.getId().equals(id)){
+            throw new ForbiddenException("Acesso negado");
+        };
+    }
 }

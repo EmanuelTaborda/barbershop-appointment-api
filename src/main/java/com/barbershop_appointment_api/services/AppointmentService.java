@@ -42,6 +42,7 @@ public class AppointmentService {
     @Transactional(readOnly = true)
     public List<AppointmentProjection> findApointmentsByCLientId(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
+        authService.validateSelfOrAdminOrBarber(id);
         //Recebe cada entity da consulta e transforma em DTO
         List<AppointmentProjection> appointments = appointmentRepository.findByClient(user);
         if (appointments.isEmpty()) {
