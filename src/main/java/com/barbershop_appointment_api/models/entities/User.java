@@ -41,7 +41,7 @@ public class User implements UserDetails {
 
     public boolean hasRole(UserType roleName){
         for (Role role : roles) {
-            if (role.getAuthority().equals(roleName)) {
+            if (role.getAuthority().equals(roleName.name())) {
                 return true;
             }
         }

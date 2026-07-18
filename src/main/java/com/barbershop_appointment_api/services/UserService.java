@@ -77,14 +77,20 @@ public class UserService implements UserDetailsService {
 
     //Buscar usuário baseado no token de login
     protected User authenticated(){
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
-            String username = jwtPrincipal.getClaim("username");
-            return userRepository.findByEmail(username);
-        } catch (Exception e) {
-            throw new UsernameNotFoundException("Email não encontrado");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwtPrincipal)) {
+            throw new UsernameNotFoundException("Usuário não autenticado");
         }
+
+        String username = jwtPrincipal.getClaim("username");
+        User user = userRepository.findByEmail(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("Email não encontrado: " + username);
+        }
+
+        return user;
     }
 
     @Transactional(readOnly = true)

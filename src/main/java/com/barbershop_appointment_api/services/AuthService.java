@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     public void validateSelfOrAdmin(Long id) {
         User user = userService.authenticated();

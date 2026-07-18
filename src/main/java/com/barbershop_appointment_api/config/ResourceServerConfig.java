@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -82,12 +83,18 @@ public class ResourceServerConfig {
 	public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(csrf -> csrf.disable());// CSRF é uma proteção pensada pra sessões com cookies; como a API é stateless (JWT no header), não se aplica aqui
-		//aqui está liberando TODAS as rotas sem exigir autenticação
-		http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
-		// Configura essa API como um Resource Server OAuth2: ela vai validar tokens JWT
-		// recebidos no header Authorization, usando o conversor customizado definido abaixo
-		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
-		// Habilita CORS usando a configuração customizada (ver bean corsConfigurationSource)
+		http.authorizeHttpRequests(authorize -> authorize
+				// rotas públicas (cadastro, login, etc) - ajuste conforme seus endpoints reais
+				.requestMatchers(HttpMethod.POST, "/users/cliente").permitAll()
+				.requestMatchers("/oauth2/**").permitAll()
+				// todo o resto exige token válido
+				.anyRequest().authenticated()
+		);
+
+		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
+				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+		);
+
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
 	}

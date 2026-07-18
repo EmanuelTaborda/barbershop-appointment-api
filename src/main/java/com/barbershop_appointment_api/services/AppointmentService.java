@@ -36,6 +36,9 @@ public class AppointmentService {
     @Autowired
     private ValidationAppointmentService validator;
 
+    @Autowired
+    private AuthService authService;
+
     @Transactional(readOnly = true)
     public List<AppointmentProjection> findApointmentsByCLientId(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
@@ -62,10 +65,7 @@ public class AppointmentService {
     @Transactional
     public AppointmentReponseDTO updateAppointment(Long id, AppointmentRequestDTO appointmentRequestDTO){
             Appointment entity = appointmentRepository.getReferenceById(id);
-            if (!entity.getClient().getEmail().equals(appointmentRequestDTO.getClientEmail())
-                    && !entity.getBarber().getEmail().equals(appointmentRequestDTO.getBarberEmail())) {
-                throw new AppointmentConflictException("Você não tem permissão para realizar este reagendamento.");
-            }
+            authService.validateSelfOrAdmin(entity.getClient().getId());
             copyDTOtoEntity(appointmentRequestDTO, entity);
 
             validator.validateAppointment(entity);
