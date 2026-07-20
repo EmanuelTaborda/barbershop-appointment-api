@@ -2,7 +2,6 @@ package com.barbershop_appointment_api.services;
 
 import com.barbershop_appointment_api.DTOs.AppointmentRequestDTO;
 import com.barbershop_appointment_api.DTOs.AppointmentReponseDTO;
-import com.barbershop_appointment_api.exceptions.AppointmentConflictException;
 import com.barbershop_appointment_api.exceptions.DatabaseException;
 import com.barbershop_appointment_api.exceptions.ResourceNotFoundException;
 import com.barbershop_appointment_api.models.entities.Appointment;
@@ -37,12 +36,12 @@ public class AppointmentService {
     private ValidationAppointmentService validator;
 
     @Autowired
-    private AuthService authService;
+    private ValidationUserService validationUserService;
 
     @Transactional(readOnly = true)
     public List<AppointmentProjection> findApointmentsByCLientId(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
-        authService.validateSelfOrAdminOrBarber(id);
+        validationUserService.validateSelfOrAdminOrBarber(id);
         //Recebe cada entity da consulta e transforma em DTO
         List<AppointmentProjection> appointments = appointmentRepository.findByClient(user);
         if (appointments.isEmpty()) {
@@ -58,6 +57,7 @@ public class AppointmentService {
         copyDTOtoEntity(appointmentRequestDTO, entity);
 
         validator.validateAppointment(entity);
+        validationUserService.validateSelfOrAdminOrBarber(entity.getClient().getId());
         entity = appointmentRepository.save(entity);
 
         return new AppointmentReponseDTO(entity);
@@ -66,7 +66,7 @@ public class AppointmentService {
     @Transactional
     public AppointmentReponseDTO updateAppointment(Long id, AppointmentRequestDTO appointmentRequestDTO){
             Appointment entity = appointmentRepository.getReferenceById(id);
-            authService.validateSelfOrAdmin(entity.getClient().getId());
+            validationUserService.validationForUpdate(id, appointmentRequestDTO);
             copyDTOtoEntity(appointmentRequestDTO, entity);
 
             validator.validateAppointment(entity);
@@ -81,7 +81,7 @@ public class AppointmentService {
         if (!appointmentRepository.existsById(id)){
             throw new ResourceNotFoundException("Agendamento não encontrado: " + id);
         }
-
+        validationUserService.validationForDelete(id);
         try {
             appointmentRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
