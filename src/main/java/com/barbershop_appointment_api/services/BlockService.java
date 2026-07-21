@@ -2,10 +2,12 @@ package com.barbershop_appointment_api.services;
 
 import com.barbershop_appointment_api.DTOs.BlockDTO;
 import com.barbershop_appointment_api.exceptions.AppointmentConflictException;
+import com.barbershop_appointment_api.exceptions.ForbiddenException;
 import com.barbershop_appointment_api.exceptions.ResourceNotFoundException;
 import com.barbershop_appointment_api.models.entities.Appointment;
 import com.barbershop_appointment_api.models.entities.Block;
 import com.barbershop_appointment_api.models.entities.User;
+import com.barbershop_appointment_api.models.enums.UserType;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import com.barbershop_appointment_api.repositories.BlockRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
@@ -64,11 +66,18 @@ public class BlockService {
 
     //Verificação de Barbeiro válido e conflito de agendamentos com data de bloqueio
     private void blockValidations(BlockDTO dto) {
-        User barber = userRepository.findById(dto.getIdBarber())
+        //verificando usuário válido
+        User user = userRepository.findById(dto.getIdBarber())
                 .orElseThrow(() -> new ResourceNotFoundException("Barbeiro Não encontrado"));
 
+        //verificando se o ID corresponde a um usuário que seja barbeiro
+        if (!user.hasRole(UserType.valueOf("ROLE_BARBER"))) {
+            throw new ForbiddenException("O ID do usuário escolhido não corresponde a um usuário barbeiro");
+        }
+
+        //verificando conflitos com possiveis agendamentos existentes
         List<Appointment> conflictAppointments = appointmentRepository.findAppointmentConflictsforBlocks
-                (barber, dto.getStartTime(), dto.getEndTime());
+                (user, dto.getStartTime(), dto.getEndTime());
 
         if (!conflictAppointments.isEmpty()){
             throw new AppointmentConflictException("Existem atendimentos marcados durante este período");
