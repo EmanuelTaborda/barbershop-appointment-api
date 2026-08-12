@@ -1,0 +1,464 @@
+{
+  "info": {
+    "_postman_id": "1b7b7ef4-0399-4f35-a9f9-27e25de96909",
+    "name": "Barbearia",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43888007"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Novo usuário - cliente",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"id\": null,\r\n  \"name\": \"João Silva\",\r\n  \"email\": \"joao@gmail.com\",\r\n  \"phone\": \"(11) 98765-4321\",\r\n  \"password\": \"abcdef\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/users/cliente",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "cliente"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Novo usuário - barbeiro",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"id\": null,\r\n  \"name\": \"Lucas Silva\",\r\n  \"email\": \"lucas@gmail.com\",\r\n  \"phone\": \"(11) 98765-4321\",\r\n  \"password\": \"SenhaSegura123!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/users/barbeiro",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "barbeiro"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obter usuário logado",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/users/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos",
+      "item": [
+        {
+          "name": "Novo agendamento",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"startTime\": \"2026-07-21T14:00:00\",\r\n  \"services\": [\"CABELO\", \"BARBA\"],\r\n  \"clientEmail\": \"emanuel@gmail.com\",\r\n  \"barberEmail\": \"flavio@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/agendamento",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "agendamento"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agendamentos by id do cliente",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/agendamento/cliente/4",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "agendamento",
+                "cliente",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agendamentos by id Barbeiro e Data",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"atendimentoInicio\": \"2026-05-15T15:20:00\",\r\n  \"servico\": [\"CABELO\", \"BARBA\"],\r\n  \"clienteEmail\": \"emanuel@gmail.com\",\r\n  \"barbeiroEmail\": \"higor@gmail.com\"\r\n}"
+            },
+            "url": {
+              "raw": "{{host}}/agendamento/barbeiro/4?date=2026-07-21",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "agendamento",
+                "barbeiro",
+                "4"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-07-21"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar agendamento",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"startTime\": \"2026-07-21T16:20:00\",\r\n  \"services\": [\"CABELO\", \"BARBA\"],\r\n  \"clientEmail\": \"emanuel@gmail.com\",\r\n  \"barberEmail\": \"higor@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/agendamento/1",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "agendamento",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar agendamento",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/agendamento/2",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "agendamento",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bloqueios",
+      "item": [
+        {
+          "name": "Novo bloqueio",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": null,\r\n  \"idBarber\": 3,\r\n  \"startTime\": \"2026-07-06T10:00:00\",\r\n  \"endTime\": \"2026-07-06T14:00:00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/bloqueios",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "bloqueios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar bloqueio",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": null,\r\n  \"idBarber\": 2,\r\n  \"startTime\": \"2026-07-06T10:00:00\",\r\n  \"endTime\": \"2026-07-06T14:00:00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/bloqueios/2",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "bloqueios",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar bloqueio",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": null,\r\n  \"idBarbeiro\": 2,\r\n  \"inicioBloqueio\": \"2026-06-24T10:00:00\",\r\n  \"fimBloqueio\": \"2026-06-24T18:00:00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/bloqueios/2",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "bloqueios",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (responseCode.code >= 200 && responseCode.code < 300) {\r",
+                  "    var json = JSON.parse(responseBody);\r",
+                  "    postman.setEnvironmentVariable('token', json.access_token);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "password",
+                  "value": "{{client-secret}}",
+                  "type": "string"
+                },
+                {
+                  "key": "username",
+                  "value": "{{client-id}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "type": "text",
+                  "uuid": "99951575-9d2b-4934-9565-d0b7c51fa8ad",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "type": "text",
+                  "uuid": "85d32b24-63d8-4fd8-9b9a-0798bf88ab28",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "grant_type",
+                  "type": "text",
+                  "uuid": "9a42e2c9-dd22-4e4d-81ed-a6bb7949b4d1",
+                  "value": "password"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/oauth2/token",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "oauth2",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_password_10i6",
+      "secret": true
+    }
+  ]
+}
