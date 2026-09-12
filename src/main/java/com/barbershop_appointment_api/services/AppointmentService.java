@@ -42,7 +42,6 @@ public class AppointmentService {
     public List<AppointmentProjection> findByCLientId(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
         validationUserService.validateSelfOrAdminOrBarber(id);
-        //Recebe cada entity da consulta e transforma em DTO
         List<AppointmentProjection> appointments = appointmentRepository.findByClient(user);
         if (appointments.isEmpty()) {
             throw new DatabaseException("Nenhum agendamento encontrado");
