@@ -4,7 +4,7 @@ import com.barbershop_appointment_api.DTOs.AppointmentRequestDTO;
 import com.barbershop_appointment_api.exceptions.ForbiddenException;
 import com.barbershop_appointment_api.models.entities.Appointment;
 import com.barbershop_appointment_api.models.entities.User;
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,14 +22,14 @@ public class ValidationUserService {
 
     public void validateSelfOrAdmin(Long id) {
         User user = userService.authenticated();
-        if (!user.hasRole(UserType.ROLE_ADMIN) && !user.getId().equals(id)){
+        if (!user.hasRole(UserRole.ROLE_ADMIN) && !user.getId().equals(id)){
             throw new ForbiddenException("Acesso negado");
         };
     }
 
     public void validateSelfOrAdminOrBarber(Long id) {
         User user = userService.authenticated();
-        if (!user.hasRole(UserType.ROLE_ADMIN) && !user.hasRole(UserType.ROLE_BARBER) && !user.getId().equals(id)){
+        if (!user.hasRole(UserRole.ROLE_ADMIN) && !user.hasRole(UserRole.ROLE_BARBER) && !user.getId().equals(id)){
             throw new ForbiddenException("Acesso negado");
         };
     }

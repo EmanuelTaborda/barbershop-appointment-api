@@ -1,6 +1,6 @@
 package com.barbershop_appointment_api.models.entities;
 
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,14 +25,14 @@ public class Role implements GrantedAuthority {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserType authority;
+    private UserRole authority;
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
 
     public Role(Long roleId, String authority) {
         this.id = roleId;
-        this.authority = UserType.valueOf(authority);
+        this.authority = UserRole.valueOf(authority);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class AppointmentController {
 
     @GetMapping(value = "/cliente/{id}")
     public ResponseEntity<List<AppointmentProjection>> getByCLientId(@PathVariable Long id){
-        List<AppointmentProjection> result = appointmentService.findApointmentsByCLientId(id);
+        List<AppointmentProjection> result = appointmentService.findByCLientId(id);
         return ResponseEntity.ok(result);
     }
 

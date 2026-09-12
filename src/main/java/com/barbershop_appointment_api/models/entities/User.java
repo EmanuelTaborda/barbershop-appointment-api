@@ -1,6 +1,6 @@
 package com.barbershop_appointment_api.models.entities;
 
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    public boolean hasRole(UserType roleName){
+    public boolean hasRole(UserRole roleName){
         for (Role role : roles) {
             if (role.getAuthority().equals(roleName.name())) {
                 return true;

@@ -39,7 +39,7 @@ public class AppointmentService {
     private ValidationUserService validationUserService;
 
     @Transactional(readOnly = true)
-    public List<AppointmentProjection> findApointmentsByCLientId(Long id) {
+    public List<AppointmentProjection> findByCLientId(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado: " + id));
         validationUserService.validateSelfOrAdminOrBarber(id);
         //Recebe cada entity da consulta e transforma em DTO

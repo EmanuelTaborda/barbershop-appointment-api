@@ -2,7 +2,7 @@ package com.barbershop_appointment_api.controllers;
 
 import com.barbershop_appointment_api.DTOs.NewUserRequestDTO;
 import com.barbershop_appointment_api.DTOs.UserDTO;
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import com.barbershop_appointment_api.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class UserController {
     @Transactional
     @PostMapping(value = "/cliente")
     public ResponseEntity<NewUserRequestDTO> insertUserClient(@Valid @RequestBody NewUserRequestDTO dto){
-        NewUserRequestDTO createdUser = userService.createUser(dto, UserType.ROLE_CLIENT);
+        NewUserRequestDTO createdUser = userService.createUser(dto, UserRole.ROLE_CLIENT);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(uri).body(createdUser);
     }
@@ -33,7 +33,7 @@ public class UserController {
     @Transactional
     @PostMapping(value = "/barbeiro")
     public ResponseEntity<NewUserRequestDTO> insertUserBarber(@Valid @RequestBody NewUserRequestDTO dto){
-        NewUserRequestDTO createdUser = userService.createUser(dto, UserType.ROLE_BARBER);
+        NewUserRequestDTO createdUser = userService.createUser(dto, UserRole.ROLE_BARBER);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(uri).body(createdUser);
     }

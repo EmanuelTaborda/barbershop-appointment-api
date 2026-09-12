@@ -5,7 +5,7 @@ import com.barbershop_appointment_api.DTOs.UserDTO;
 import com.barbershop_appointment_api.exceptions.DatabaseException;
 import com.barbershop_appointment_api.models.entities.Role;
 import com.barbershop_appointment_api.models.entities.User;
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import com.barbershop_appointment_api.models.projections.UserDetailsProjection;
 import com.barbershop_appointment_api.repositories.RoleRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
@@ -36,12 +36,12 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Transactional
-    public NewUserRequestDTO createUser(NewUserRequestDTO dto, UserType userType){
+    public NewUserRequestDTO createUser(NewUserRequestDTO dto, UserRole userRole){
         User entity = new User();
 
         try {
             copyDTOToEntity(dto, entity);
-            Role role = roleRepository.findByAuthority(userType);
+            Role role = roleRepository.findByAuthority(userRole);
             entity.getRoles().add(role);
             userRepository.save(entity);
         } catch (DataIntegrityViolationException e) {

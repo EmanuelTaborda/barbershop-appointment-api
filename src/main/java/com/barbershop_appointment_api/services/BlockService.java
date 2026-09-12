@@ -7,7 +7,7 @@ import com.barbershop_appointment_api.exceptions.ResourceNotFoundException;
 import com.barbershop_appointment_api.models.entities.Appointment;
 import com.barbershop_appointment_api.models.entities.Block;
 import com.barbershop_appointment_api.models.entities.User;
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import com.barbershop_appointment_api.repositories.BlockRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
@@ -71,7 +71,7 @@ public class BlockService {
                 .orElseThrow(() -> new ResourceNotFoundException("Barbeiro Não encontrado"));
 
         //verificando se o ID corresponde a um usuário que seja barbeiro
-        if (!user.hasRole(UserType.valueOf("ROLE_BARBER"))) {
+        if (!user.hasRole(UserRole.valueOf("ROLE_BARBER"))) {
             throw new ForbiddenException("O ID do usuário escolhido não corresponde a um usuário barbeiro");
         }
 

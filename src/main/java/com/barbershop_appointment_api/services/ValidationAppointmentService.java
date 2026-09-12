@@ -5,7 +5,7 @@ import com.barbershop_appointment_api.exceptions.AppointmentConflictException;
 import com.barbershop_appointment_api.models.entities.Appointment;
 import com.barbershop_appointment_api.models.entities.Block;
 import com.barbershop_appointment_api.models.enums.ServiceType;
-import com.barbershop_appointment_api.models.enums.UserType;
+import com.barbershop_appointment_api.models.enums.UserRole;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import com.barbershop_appointment_api.repositories.BlockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,12 @@ public class ValidationAppointmentService {
 	//Verificar User Barbeiro
 	private void validateBarber(Appointment appointment) {
 		if (!appointment.getBarber().getRoles().stream()
-				.anyMatch(role -> role.getAuthority().equals(UserType.ROLE_BARBER.name()))) {
-			throw new IllegalArgumentException("O usuário selecionado como barbeiro é inválido.");
+				.anyMatch(role -> role.getAuthority().equals(UserRole.ROLE_BARBER.name()))) {
+			throw new AppointmentConflictException("O usuário selecionado como barbeiro é inválido.");
 		}
 	}
 
-    //Verificação se o atendimento solicitado não é no passado e limitando o agendamento para no máximo dois meses de antecedência
+    //Limitando o agendamento para no máximo dois meses de antecedência
     private void validateDateAdvance(Appointment appointment) {
         LocalDateTime agora = LocalDateTime.now();
 
@@ -58,7 +58,7 @@ public class ValidationAppointmentService {
         }
     }
 
-    //Função para validar se não há conflitos do horário solicitado no DTO com o horário de funcionamento da barbearia
+    //Função para validar se não há conflitos do horário solicitado com o horário de funcionamento da barbearia
     private void validateOpeningHours(Appointment appointment) {
         LocalTime startTime = appointment.getStartTime().toLocalTime();
         LocalTime endTime = calculateEndTIme(appointment.getStartTime(), appointment.getServices())
