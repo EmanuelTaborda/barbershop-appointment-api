@@ -42,8 +42,8 @@ public class Factory {
     public static AppointmentRequestDTO createAppointmentRequestDTO(){
         AppointmentRequestDTO dto = new AppointmentRequestDTO();
         dto.setStartTime(LocalDateTime.now().plusMinutes(10));
-        dto.setBarberEmail("barber@gmail.com");
-        dto.setClientEmail("client@gmail.com");
+        dto.setBarberEmail("teste@gmail.com");
+        dto.setClientEmail("testet@gmail.com");
         dto.setServices(Set.of(ServiceType.CABELO));
         return dto;
     }

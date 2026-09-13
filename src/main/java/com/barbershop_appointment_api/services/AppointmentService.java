@@ -64,7 +64,8 @@ public class AppointmentService {
 
     @Transactional
     public AppointmentReponseDTO updateAppointment(Long id, AppointmentRequestDTO appointmentRequestDTO){
-            Appointment entity = appointmentRepository.getReferenceById(id);
+            Appointment entity = appointmentRepository.findById(id).
+                    orElseThrow(() -> new ResourceNotFoundException("Agendamento não encontrado"));
             validationUserService.validationForUpdate(id, appointmentRequestDTO);
             copyDTOtoEntity(appointmentRequestDTO, entity);
 
