@@ -11,6 +11,7 @@ import com.barbershop_appointment_api.models.entities.User;
 import com.barbershop_appointment_api.models.projections.AppointmentProjection;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.dao.DataIntegrityViolationException;
 import tests.Factory;
 
 import java.util.List;
@@ -53,6 +55,7 @@ public class AppointmentServiceTests {
     private Long nonPermitedUsertId;
     private Long existingAppointmentId;
     private Long nonExistingAppointmentId;
+    private Long dependentId;
     private User client;
     private User barber;
     private AppointmentProjection appointmentProjection;
@@ -60,7 +63,6 @@ public class AppointmentServiceTests {
     private String validBarberEmail;
     private String nonValidEmail;
     private AppointmentRequestDTO requestDto;
-    private AppointmentReponseDTO responseDto;
     private Appointment appointment;
 
     @BeforeEach
@@ -68,11 +70,12 @@ public class AppointmentServiceTests {
         permitedUserId = 1L;
         nonPermitedUsertId = 2L;
         nonExistingClientId = 3L;
+        existingAppointmentId = 4L;
+        nonExistingAppointmentId = 5L;
         validClientEmail = "client@gmail.com";
         validBarberEmail = "barber@gmail.com";
         nonValidEmail = "nonValid@gmail.com";
         requestDto = Factory.createAppointmentRequestDTO();
-        responseDto = Factory.createAppointmentReponseDTO();
         client = Factory.createUserClient();
         barber = Factory.createUserBarber();
         appointment = Factory.createAppointment();
@@ -267,8 +270,6 @@ public class AppointmentServiceTests {
 
         @BeforeEach
         void setUp() throws Exception {
-            existingAppointmentId = 4L;
-            nonExistingAppointmentId = 5L;
 
             when(repository.findById(existingAppointmentId)).thenReturn(Optional.of(appointment));
             when(repository.findById(nonExistingAppointmentId)).thenReturn(Optional.empty());
@@ -387,6 +388,82 @@ public class AppointmentServiceTests {
             verify(validationAppointmentService, times(1)).validateAppointment(any(Appointment.class));
             verify(repository, times(1)).save(any(Appointment.class));
 
+        }
+    }
+
+    @Nested
+    class DeleteAppointment{
+
+        @BeforeEach
+        void setUp() throws Exception {
+
+            dependentId = 6L;
+
+            when(repository.existsById(existingAppointmentId)).thenReturn(true);
+            when(repository.existsById(dependentId)).thenReturn(true);
+            when(repository.existsById(nonExistingAppointmentId)).thenReturn(false);
+
+            doThrow(new DataIntegrityViolationException("Erro simulado de integridade"))
+                    .when(repository).deleteById(dependentId);
+        }
+
+        @Test
+        void shouldThrowResourceNotFoundExceptionWhenAppointmentDoesNotExist() {
+            ResourceNotFoundException ex = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> service.deleteAppointment(nonExistingAppointmentId)
+            );
+
+            assertEquals("Agendamento não encontrado: " + nonExistingAppointmentId, ex.getMessage());
+
+            verify(repository, times(1)).existsById(nonExistingAppointmentId);
+            verify(validationUserService, never()).validationForDelete(any());
+            verify(repository, never()).deleteById(any());
+        }
+
+        @Test
+        void shouldThrowForbiddenExceptionWhenUserDoesNotHavePermission(){
+            doThrow(new ForbiddenException("Acesso negado")).
+                    when(validationUserService).validationForDelete(existingAppointmentId);
+
+            ForbiddenException ex = assertThrows(
+                    ForbiddenException.class,
+                    () -> service.deleteAppointment(existingAppointmentId)
+            );
+
+            assertEquals("Acesso negado", ex.getMessage());
+
+            verify(repository, times(1)).existsById(existingAppointmentId);
+            verify(validationUserService, times(1)).validationForDelete(existingAppointmentId);
+            verify(repository, never()).deleteById(any());
+        }
+
+        @Test
+        void shouldThrowDatabaseExceptionWhenDataIntegrityViolationOccurs(){
+            DatabaseException ex = assertThrows(
+                    DatabaseException.class,
+                    () -> service.deleteAppointment(dependentId)
+            );
+
+            assertEquals("Falha de integridade referencial", ex.getMessage());
+
+            verify(repository, times(1)).existsById(dependentId);
+            verify(validationUserService, times(1)).validationForDelete(dependentId);
+            verify(repository, times(1)).deleteById(dependentId);
+        }
+
+        @Test
+        void shouldDeleteAppointmentWhenRequestIsValid(){
+
+            doNothing().when(repository).deleteById(existingAppointmentId);
+
+            Assertions.assertDoesNotThrow(() -> {
+                service.deleteAppointment(existingAppointmentId);
+            });
+
+            verify(repository, times(1)).existsById(existingAppointmentId);
+            verify(validationUserService, times(1)).validationForDelete(existingAppointmentId);
+            verify(repository, times(1)).deleteById(existingAppointmentId);
         }
     }
 }
