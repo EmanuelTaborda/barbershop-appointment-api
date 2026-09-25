@@ -8,6 +8,7 @@ import com.barbershop_appointment_api.exceptions.ForbiddenException;
 import com.barbershop_appointment_api.exceptions.ResourceNotFoundException;
 import com.barbershop_appointment_api.models.entities.Appointment;
 import com.barbershop_appointment_api.models.entities.User;
+import com.barbershop_appointment_api.models.projections.AppointmentBarberProjection;
 import com.barbershop_appointment_api.models.projections.AppointmentProjection;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
@@ -18,12 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.dao.DataIntegrityViolationException;
 import tests.Factory;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,8 +54,10 @@ public class AppointmentServiceTests {
     private AppointmentService service;
 
     private Long nonExistingClientId;
-    private Long permitedUserId;
-    private Long nonPermitedUsertId;
+    private Long existingBarberId;
+    private Long nonExistingBarberId;
+    private Long permittedUserId;
+    private Long nonPermittedUserId;
     private Long existingAppointmentId;
     private Long nonExistingAppointmentId;
     private Long dependentId;
@@ -64,11 +69,13 @@ public class AppointmentServiceTests {
     private String nonValidEmail;
     private AppointmentRequestDTO requestDto;
     private Appointment appointment;
+    private LocalDate date;
+    private AppointmentBarberProjection appointmentBarberProjection;
 
     @BeforeEach
     void setUpCommon() {
-        permitedUserId = 1L;
-        nonPermitedUsertId = 2L;
+        permittedUserId = 1L;
+        nonPermittedUserId = 2L;
         nonExistingClientId = 3L;
         existingAppointmentId = 4L;
         nonExistingAppointmentId = 5L;
@@ -80,8 +87,8 @@ public class AppointmentServiceTests {
         barber = Factory.createUserBarber();
         appointment = Factory.createAppointment();
 
-        doNothing().when(validationUserService).validateSelfOrAdminOrBarber(permitedUserId);
-        doThrow(new ForbiddenException("Acesso negado")).when(validationUserService).validateSelfOrAdminOrBarber(nonPermitedUsertId);
+        doNothing().when(validationUserService).validateSelfOrAdminOrBarber(permittedUserId);
+        doThrow(new ForbiddenException("Acesso negado")).when(validationUserService).validateSelfOrAdminOrBarber(nonPermittedUserId);
 
         when(userRepository.findByEmail(validClientEmail)).thenReturn(client);
         when(userRepository.findByEmail(validBarberEmail)).thenReturn(barber);
@@ -101,8 +108,8 @@ public class AppointmentServiceTests {
             List<AppointmentProjection> expectedAppointments = List.of(appointmentProjection);
 
             when(userRepository.findById(nonExistingClientId)).thenReturn(Optional.empty());
-            when(userRepository.findById(permitedUserId)).thenReturn(Optional.of(client));
-            when(userRepository.findById(nonPermitedUsertId)).thenReturn(Optional.of(client));
+            when(userRepository.findById(permittedUserId)).thenReturn(Optional.of(client));
+            when(userRepository.findById(nonPermittedUserId)).thenReturn(Optional.of(client));
 
             when(repository.findByClient(client)).thenReturn(expectedAppointments);
         }
@@ -112,7 +119,7 @@ public class AppointmentServiceTests {
         void shouldReturnListOfAppointmentsProjectionsWhenAppointmentExistsAndValidClient() {
 
             // Act
-            List<AppointmentProjection> result = service.findByCLientId(permitedUserId);
+            List<AppointmentProjection> result = service.findByCLientId(permittedUserId);
 
             // Assert
             assertNotNull(result, "A lista de agendamentos não deve ser nula");
@@ -146,13 +153,13 @@ public class AppointmentServiceTests {
 
             DatabaseException ex = assertThrows(
                     DatabaseException.class,
-                    () -> service.findByCLientId(permitedUserId)
+                    () -> service.findByCLientId(permittedUserId)
             );
 
             assertEquals("Nenhum agendamento encontrado", ex.getMessage());
 
-            verify(userRepository, times(1)).findById(permitedUserId);
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(permitedUserId);
+            verify(userRepository, times(1)).findById(permittedUserId);
+            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(permittedUserId);
             verify(repository, times(1)).findByClient(client);
         }
 
@@ -160,13 +167,13 @@ public class AppointmentServiceTests {
         void shouldThrowForbiddenExceptionWhenUserDoesNotHavePermission() {
             ForbiddenException ex = assertThrows(
                     ForbiddenException.class,
-                    () -> service.findByCLientId(nonPermitedUsertId)
+                    () -> service.findByCLientId(nonPermittedUserId)
             );
 
             assertEquals("Acesso negado", ex.getMessage());
 
-            verify(userRepository, times(1)).findById(nonPermitedUsertId);
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(nonPermitedUsertId);
+            verify(userRepository, times(1)).findById(nonPermittedUserId);
+            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(nonPermittedUserId);
             verify(repository, never()).findByClient(any());
         }
     }
@@ -464,6 +471,67 @@ public class AppointmentServiceTests {
             verify(repository, times(1)).existsById(existingAppointmentId);
             verify(validationUserService, times(1)).validationForDelete(existingAppointmentId);
             verify(repository, times(1)).deleteById(existingAppointmentId);
+        }
+    }
+
+    @Nested
+    class FindByBarberAndDate{
+
+        @BeforeEach
+        void setUp() throws Exception {
+            existingBarberId = 7L;
+            nonExistingBarberId = 8L;
+            date = LocalDate.now();
+            appointmentBarberProjection = mock(AppointmentBarberProjection.class);
+
+            when(userRepository.findById(existingBarberId)).thenReturn(Optional.of(barber));
+            when(userRepository.findById(nonExistingBarberId)).thenReturn(Optional.empty());
+        }
+
+        @Test
+        void shouldThrowResourceNotFoundExceptionWhenBarberDoesNotExist() {
+            ResourceNotFoundException ex = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> service.findByBarberAndDate(nonExistingBarberId, date)
+            );
+
+            assertEquals("Barbeiro não encontrado: " + nonExistingBarberId, ex.getMessage());
+
+            verify(userRepository, times(1)).findById(nonExistingBarberId);
+            verify(repository, never()).findByBarberAndDate(any(), any());
+        }
+
+        @Test
+        void shouldThrowDatabaseExceptionWhenListOfAppointmentIsEmpty() {
+
+            when(repository.findByBarberAndDate(barber.getId(), date)).thenReturn(List.of());
+
+            DatabaseException ex = assertThrows(
+                    DatabaseException.class,
+                    () -> service.findByBarberAndDate(existingBarberId, date)
+            );
+
+            assertEquals("Nenhum agendamento encontrado", ex.getMessage());
+
+            verify(userRepository, times(1)).findById(existingBarberId);
+            verify(repository, times(1)).findByBarberAndDate(barber.getId(), date);
+        }
+
+        @Test
+        void shouldReturnListOfAppointmentsWhenRequestIsValid() {
+
+            List<AppointmentBarberProjection> expectedAppointments = List.of(appointmentBarberProjection);
+
+            when(repository.findByBarberAndDate(barber.getId(), date)).thenReturn(expectedAppointments);
+
+            List<AppointmentBarberProjection> result = service.findByBarberAndDate(existingBarberId, date);
+
+            assertNotNull(result, "A lista de agendamentos não deve ser nula");
+            assertFalse(result.isEmpty(), "A lista não deve estar vazia");
+            assertEquals(appointmentBarberProjection, result.getFirst(), "O agendamento retornado deve ser o esperado");
+
+            verify(userRepository, times(1)).findById(existingBarberId);
+            verify(repository, times(1)).findByBarberAndDate(barber.getId(), date);
         }
     }
 }
