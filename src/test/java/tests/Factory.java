@@ -2,6 +2,7 @@ package tests;
 
 import com.barbershop_appointment_api.DTOs.AppointmentReponseDTO;
 import com.barbershop_appointment_api.DTOs.AppointmentRequestDTO;
+import com.barbershop_appointment_api.DTOs.BlockDTO;
 import com.barbershop_appointment_api.models.entities.Appointment;
 import com.barbershop_appointment_api.models.entities.Role;
 import com.barbershop_appointment_api.models.entities.User;
@@ -58,8 +59,11 @@ public class Factory {
         return appointment;
     }
 
-    public static AppointmentReponseDTO createAppointmentReponseDTO() {
-        AppointmentReponseDTO reponseDTO = new AppointmentReponseDTO();
-        return reponseDTO;
+    public static BlockDTO createBlockDTO() {
+        BlockDTO blockDTO = new BlockDTO();
+        blockDTO.setIdBarber(200L);
+        blockDTO.setStartTime(LocalDateTime.now().plusMinutes(10));
+        blockDTO.setEndTime(blockDTO.getStartTime().plusDays(2));
+        return blockDTO;
     }
 }

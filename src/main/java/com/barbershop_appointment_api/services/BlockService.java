@@ -68,12 +68,7 @@ public class BlockService {
     private void blockValidations(BlockDTO dto) {
         //verificando usuário válido
         User user = userRepository.findById(dto.getIdBarber())
-                .orElseThrow(() -> new ResourceNotFoundException("Barbeiro Não encontrado"));
-
-        //verificando se o ID corresponde a um usuário que seja barbeiro
-        if (!user.hasRole(UserRole.valueOf("ROLE_BARBER"))) {
-            throw new ForbiddenException("O ID do usuário escolhido não corresponde a um usuário barbeiro");
-        }
+                .orElseThrow(() -> new ResourceNotFoundException("Barbeiro não encontrado"));
 
         //verificando conflitos com possiveis agendamentos existentes
         List<Appointment> conflictAppointments = appointmentRepository.findAppointmentConflictsforBlocks
