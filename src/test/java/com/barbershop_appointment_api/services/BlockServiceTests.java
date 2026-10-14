@@ -9,6 +9,7 @@ import com.barbershop_appointment_api.models.entities.User;
 import com.barbershop_appointment_api.repositories.AppointmentRepository;
 import com.barbershop_appointment_api.repositories.BlockRepository;
 import com.barbershop_appointment_api.repositories.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,8 @@ public class BlockServiceTests {
         when(blockRepository.findById(existingId)).thenReturn(Optional.of(block));
         when(blockRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
+        when(userRepository.getReferenceById(existingId)).thenReturn(barber);
+
     }
 
 
@@ -81,7 +84,6 @@ public class BlockServiceTests {
 
             assertEquals("Barbeiro não encontrado", ex.getMessage());
 
-            verify(userRepository).findById(dto.getIdBarber());
             verifyNoInteractions(appointmentRepository, blockRepository);
         }
 
@@ -99,8 +101,6 @@ public class BlockServiceTests {
 
             assertEquals("Existem atendimentos marcados durante este período", ex.getMessage());
 
-            verify(userRepository).findById(dto.getIdBarber());
-            verify(appointmentRepository).findAppointmentConflictsforBlocks(barber, dto.getStartTime(), dto.getEndTime());
             verifyNoInteractions(blockRepository);
         }
 
@@ -138,7 +138,6 @@ public class BlockServiceTests {
 
             assertEquals("Bloqueio não encontrado", ex.getMessage());
 
-            verify(blockRepository).findById(nonExistingId);
             verifyNoInteractions(userRepository, appointmentRepository);
 
         }
@@ -153,12 +152,67 @@ public class BlockServiceTests {
             );
 
             assertEquals("Barbeiro não encontrado", ex.getMessage());
+
+            verify(blockRepository, never()).save(any());
         }
 
         @Test
-        void shouldThrowAppointmentConflictExceptionWhenBarberHasAppointmentsInBlockedPeriod () {}
+        void shouldThrowAppointmentConflictExceptionWhenBarberHasAppointmentsInBlockedPeriod () {
+            dto.setIdBarber(existingId);
+            when(appointmentRepository.findAppointmentConflictsforBlocks(barber, dto.getStartTime(), dto.getEndTime()))
+                    .thenReturn(List.of(appointment));
+
+            AppointmentConflictException ex = assertThrows(
+                    AppointmentConflictException.class,
+                    () -> blockService.updateBlock(existingId, dto)
+            );
+
+            assertEquals("Existem atendimentos marcados durante este período", ex.getMessage());
+
+            verify(blockRepository, never()).save(any());
+        }
 
         @Test
-        void shouldUpdateBlockWhenReturnBlockDTOWhenRequestIsValid () {}
+        void shouldUpdateBlockAndReturnBlockDTOWhenRequestIsValid () {
+            dto.setIdBarber(existingId);
+
+            when(appointmentRepository.findAppointmentConflictsforBlocks(barber, dto.getStartTime(), dto.getEndTime()))
+                    .thenReturn(List.of());
+            when(blockRepository.save(any(Block.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            BlockDTO result = blockService.updateBlock(existingId, dto);
+
+            assertNotNull(result, "O DTO não deve ser nulo");
+            assertEquals(dto.getStartTime(), result.getStartTime());
+            assertEquals(dto.getEndTime(), result.getEndTime());
+
+            verify(blockRepository).save(any(Block.class));
+        }
+    }
+
+    @Nested
+    class DeleteBlock{
+
+        @Test
+        void shouldThrowResourceNotFoundExceptionWhenBlockDoesNotExist() {
+
+            ResourceNotFoundException ex = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> blockService.deleteBlock(nonExistingId)
+            );
+
+            assertEquals("Bloqueio não encontrado", ex.getMessage());
+
+            verify(blockRepository, never()).delete(any());
+        }
+
+        @Test
+        void shouldDeleteBlockWhenRequestIsValid() {
+
+            blockService.deleteBlock(existingId);
+
+            verify(blockRepository).delete(block);
+        }
     }
 }

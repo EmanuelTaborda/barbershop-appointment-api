@@ -1,0 +1,239 @@
+[33mcommit 33d63d38de5c3ac29b8190462a3fd6d0512fb93c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Wed Oct 14 15:45:47 2026 -0300
+
+    Refactoring AppointmentServiceTests
+
+[33mcommit 92dc616f4a2f94ff917116c090be79dfef299437[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Fri Oct 9 12:02:05 2026 -0300
+
+    JaCoCo configured
+
+[33mcommit 0677941a198591e3b8ddde8080a74e578956f86c[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Fri Oct 2 17:23:58 2026 -0300
+
+    Tests for InsertBlock completed
+
+[33mcommit 8688e59047e6d9336b71d248585c249a4ab631c7[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Fri Sep 25 12:02:35 2026 -0300
+
+    tests for FindByBarberAndDate completed
+
+[33mcommit c2c562043981b12664d51ab921f2f3fb369db66d[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Tue Sep 22 13:35:02 2026 -0300
+
+    tests for DeleteAppointment completed
+
+[33mcommit f86470c274501f6067a590f732b32220f2e6f190[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Sun Sep 13 17:59:08 2026 -0300
+
+    tests for UpdateAppointment completed
+
+[33mcommit a8fb94bf1852cafe4049852722b7acff955511fc[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Sat Sep 12 18:18:54 2026 -0300
+
+    tests for BookAppointment completed.
+
+[33mcommit 86c9c3191993400c7ceb1d12a1b537b643c9d75e[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Sat Sep 12 10:54:30 2026 -0300
+
+    starting tests for AppointmentService - tests for findByClient method completed
+
+[33mcommit cc7f30a4dd3872cb62f261e2506f9a2279e8390b[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Tue Aug 11 21:00:10 2026 -0300
+
+    README.md updated
+
+[33mcommit 6ed688aa1c1b68d9c51e1759fe9581805828dd9d[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Mon Aug 10 23:24:36 2026 -0300
+
+    README.md file made
+
+[33mcommit 29eb5338e2553d7aa26defd728b22b1e70ff55d5[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Mon Jul 20 21:39:25 2026 -0300
+
+    Adding user validation for block endpoints
+
+[33mcommit a7f2a150f49f86f54e899ba935e533816511f6bb[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Mon Jul 20 17:38:49 2026 -0300
+
+    Adding AppointmentController endpois validation for users
+
+[33mcommit 8495cae978f37e4e6e2f6cf2ee3e4736369f8ace[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Fri Jul 17 23:55:33 2026 -0300
+
+    adding validaton to findApointmentsByCLientId
+
+[33mcommit 9e5051eff337d061bf363a5c35e9a8ad49ac9e89[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Fri Jul 17 23:37:49 2026 -0300
+
+    Refactoring authentication methods
+
+[33mcommit c89c61ad171e6745b3d6898e07d861b2c9e678ff[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Fri Jul 17 11:05:37 2026 -0300
+
+    Validate self or admin - AuthService
+
+[33mcommit 7b0235f1806dcba0e7ffd4fded98ffe5b1386c30[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Tue Jul 14 22:58:46 2026 -0300
+
+    Get user logged
+
+[33mcommit df8270bb41b189a2a0ae16cba3d73ffd178aeab1[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Tue Jul 7 23:18:32 2026 -0300
+
+    preAuthorize endpoints started
+
+[33mcommit b1df51bae74af97ac53afd80f40b59178fe46f28[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Mon Jul 6 23:47:02 2026 -0300
+
+    folder name changed
+
+[33mcommit 381cfbded7668197d09bf0a18c831de5d813c546[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Mon Jul 6 23:12:12 2026 -0300
+
+    Login method with oauth2
+
+[33mcommit b7405369b80f35142509ee3256f0f97d123ec256[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Thu Jul 2 23:58:40 2026 -0300
+
+    Implementando interfaces Spring Security
+
+[33mcommit c7562ff75c90f96d90f446a55425c49d68e2a911[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Thu Jul 2 22:44:19 2026 -0300
+
+    Inicio de implementação do Spring Security
+
+[33mcommit 39d26d87a9438a8fc32a4e3105d21828b4b06bbf[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Thu Jul 2 17:01:02 2026 -0300
+
+    User controller refatorado
+
+[33mcommit 329248575293ede2aa6e3ee3a8e59be6399bc908[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Thu Jul 2 16:23:15 2026 -0300
+
+    CRUD blocks implemented
+
+[33mcommit 15480e567b7cece193644a39ceb431afe7e8a7e6[m
+Author: Emanuel <emanuel.cristotaborda@gmail.com>
+Date:   Tue Jun 30 22:33:33 2026 -0300
+
+    Correção AppointmentStatus
+
+[33mcommit 255950406df02819416d921fae9d9401e5910f6f[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Fri Jun 19 00:02:39 2026 -0300
+
+    Projeto passado para inglês
+
+[33mcommit d02d8cfbe54e852ae6c7256d204a3fd013d0e02f[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Tue May 19 23:28:14 2026 -0300
+
+    Inicio da implementação da função de criar bloqueios
+
+[33mcommit 9aa6d202a862a8a8c13ae795ea9f0ff71da1a55c[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Tue May 19 21:35:02 2026 -0300
+
+    Implementado consulta de agendamentos por barbeiro e data
+
+[33mcommit 2b45c92789ee15c80a0ba8100ae8b3d91901be39[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Mon May 18 21:40:17 2026 -0300
+
+    Concluido método para criação de usuários
+
+[33mcommit 887f8b428de470f697a242a4c7ee1a18c8655812[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Fri May 15 22:48:06 2026 -0300
+
+    Implementado Função de criação de novo usuário
+
+[33mcommit 0f0c6343a9cd0f4d26841ab236831880243996a8[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Fri May 15 21:11:19 2026 -0300
+
+    Função de cancelamento de agendamento
+
+[33mcommit 204d306ce4ce9c213207065549bb6ed4b74087f4[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Fri May 15 20:01:49 2026 -0300
+
+    Refatoração - Desaclopamento das funções de validação para nova classe
+
+[33mcommit d81a51a1990266dced4a214ac9b0dd0c3c91e490[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Wed May 13 23:36:49 2026 -0300
+
+    metódo para cliente atualizar seu agendamento
+
+[33mcommit 800451a60ac68d6e6a0085d383a85b873c4fc419[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Wed May 13 22:37:55 2026 -0300
+
+    Refatoração no agendamento e consulta de agendamentos pelo cliente
+
+[33mcommit 699f76b491e4ff2ce2af3c7ca38ccfe0a713f813[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Wed May 13 10:33:02 2026 -0300
+
+    Resposta customizada para erros no Validation
+
+[33mcommit e48c7015e9e4d8113566386ba2bcfadd4261f893[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Tue May 12 23:36:31 2026 -0300
+
+    Refatoração da função de agendamento
+
+[33mcommit 238b9fbe03114106cf1c61865a8c441072d8c220[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Mon May 11 23:21:00 2026 -0300
+
+    Implementado classe de bloqueio na agenda
+
+[33mcommit 25d79fa85d2befb3520427e83d08ee7f8a8fef59[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Mon May 11 22:38:43 2026 -0300
+
+    Implementado validação de horário de almoço para realizar agendamento
+
+[33mcommit 782567212f9fac7ea59f18e6a94ded4a8e66a216[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Sun May 10 17:04:37 2026 -0300
+
+    Resolvendo conflitos de agendamento e handlers implementado
+
+[33mcommit 80b245b4ae546b5f71a362d2e81fe3e889d32ed3[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Sun May 10 00:33:25 2026 -0300
+
+    Refatorando funcção de agendamento
+
+[33mcommit 8b4404211fe5291be5a782dfc3f493afb83e603b[m
+Author: Emanuel Taborda <emanuel.cristotaborda@gmail.com>
+Date:   Sat May 9 00:40:42 2026 -0300
+
+    Inicio da primeira função - Realizar agendamento
