@@ -4,6 +4,7 @@ import com.barbershop_appointment_api.DTOs.AppointmentReponseDTO;
 import com.barbershop_appointment_api.DTOs.AppointmentRequestDTO;
 import com.barbershop_appointment_api.DTOs.BlockDTO;
 import com.barbershop_appointment_api.models.entities.Appointment;
+import com.barbershop_appointment_api.models.entities.Block;
 import com.barbershop_appointment_api.models.entities.Role;
 import com.barbershop_appointment_api.models.entities.User;
 import com.barbershop_appointment_api.models.enums.ServiceType;
@@ -57,6 +58,12 @@ public class Factory {
         appointment.setServices(Set.of(ServiceType.CABELO));
         appointment.setEndTime(appointment.getStartTime().plusMinutes(30));
         return appointment;
+    }
+
+    public static Block createBlock() {
+        Block block = new Block(50L, Factory.createUserBarber(), LocalDateTime.now().plusMinutes(10),
+                LocalDateTime.now().minusHours(1));
+        return block;
     }
 
     public static BlockDTO createBlockDTO() {

@@ -43,6 +43,7 @@ public class BlockServiceTests {
     private AppointmentRepository appointmentRepository;
 
     private BlockDTO dto;
+    private Block block;
     private Long existingId;
     private Long nonExistingId;
     private User barber;
@@ -51,23 +52,23 @@ public class BlockServiceTests {
     @BeforeEach
     void setUpCommon() {
         dto = Factory.createBlockDTO();
+        block = Factory.createBlock();
         existingId = 1L;
         nonExistingId = 2L;
         barber = Factory.createUserBarber();
         appointment = Factory.createAppointment();
+
+        when(userRepository.findById(existingId)).thenReturn(Optional.of(barber));
+        when(userRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+
+        when(blockRepository.findById(existingId)).thenReturn(Optional.of(block));
+        when(blockRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
     }
 
 
     @Nested
     class InsertBlock{
-
-        @BeforeEach
-        void setUp() throws Exception{
-            when(userRepository.findById(existingId)).thenReturn(Optional.of(barber));
-            when(userRepository.findById(nonExistingId)).thenReturn(Optional.empty());
-
-        }
 
         @Test
         void shouldThrowResourceNotFoundExceptionWhenBarberDoesNotExist() {
@@ -122,5 +123,42 @@ public class BlockServiceTests {
             assertEquals(dto.getEndTime(), result.getEndTime());
 
         }
+    }
+
+    @Nested
+    class UpdateBlock{
+
+        @Test
+        void shouldThrowResourceNotFoundExceptionWhenBlockDoesNotExist(){
+
+            ResourceNotFoundException ex = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> blockService.updateBlock(nonExistingId, dto)
+            );
+
+            assertEquals("Bloqueio não encontrado", ex.getMessage());
+
+            verify(blockRepository).findById(nonExistingId);
+            verifyNoInteractions(userRepository, appointmentRepository);
+
+        }
+
+        @Test
+        void shouldThrowResourceNotFoundExceptionWhenBarberDoesNotExist() {
+            dto.setIdBarber(nonExistingId);
+
+            ResourceNotFoundException ex = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> blockService.updateBlock(existingId, dto)
+            );
+
+            assertEquals("Barbeiro não encontrado", ex.getMessage());
+        }
+
+        @Test
+        void shouldThrowAppointmentConflictExceptionWhenBarberHasAppointmentsInBlockedPeriod () {}
+
+        @Test
+        void shouldUpdateBlockWhenReturnBlockDTOWhenRequestIsValid () {}
     }
 }

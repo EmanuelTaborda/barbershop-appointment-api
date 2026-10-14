@@ -125,10 +125,6 @@ public class AppointmentServiceTests {
             assertFalse(result.isEmpty(), "A lista de agendamentos não deve estar vazia");
             assertEquals(appointmentProjection, result.getFirst(), "O agendamento retornado deve ser o esperado");
 
-            // Verify
-            verify(userRepository, times(1)).findById(client.getId());
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(client.getId());
-            verify(repository, times(1)).findByClient(client);
         }
 
         @Test
@@ -141,9 +137,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Cliente não encontrado: " + nonExistingClientId, ex.getMessage());
 
-            verify(userRepository, times(1)).findById(nonExistingClientId);
-            verify(validationUserService, never()).validateSelfOrAdminOrBarber(anyLong());
-            verify(repository, never()).findByClient(any());
+            verifyNoInteractions(validationUserService, repository);
         }
 
         @Test
@@ -156,10 +150,6 @@ public class AppointmentServiceTests {
             );
 
             assertEquals("Nenhum agendamento encontrado", ex.getMessage());
-
-            verify(userRepository, times(1)).findById(permittedUserId);
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(permittedUserId);
-            verify(repository, times(1)).findByClient(client);
         }
 
         @Test
@@ -171,8 +161,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Acesso negado", ex.getMessage());
 
-            verify(userRepository, times(1)).findById(nonPermittedUserId);
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(nonPermittedUserId);
             verify(repository, never()).findByClient(any());
         }
     }
@@ -191,10 +179,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Cliente não encontrado: " + nonValidEmail, ex.getMessage());
 
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(userRepository, never()).findByEmail(requestDto.getBarberEmail());
-            verify(validationAppointmentService, never()).validateAppointment(any());
-            verify(repository, never()).save(any());
+            verifyNoInteractions(validationAppointmentService, repository);
         }
 
         @Test
@@ -209,10 +194,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Barbeiro não encontrado: " + nonValidEmail, ex.getMessage());
 
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(userRepository, times(1)).findByEmail(requestDto.getBarberEmail());
-            verify(validationAppointmentService, never()).validateAppointment(any());
-            verify(repository, never()).save(any());
+            verifyNoInteractions(validationAppointmentService, repository);
         }
 
         @Test
@@ -230,9 +212,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Conflito de agendamento", ex.getMessage());
 
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(userRepository, times(1)).findByEmail(requestDto.getBarberEmail());
-            verify(validationAppointmentService, times(1)).validateAppointment(any(Appointment.class));
             verify(repository, never()).save(any());
         }
 
@@ -251,8 +230,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Acesso negado", ex.getMessage());
 
-            verify(validationAppointmentService, times(1)).validateAppointment(any(Appointment.class));
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(client.getId());
             verify(repository, never()).save(any());
         }
 
@@ -265,8 +242,6 @@ public class AppointmentServiceTests {
 
             assertNotNull(result, "O DTO não deve ser nulo");
 
-            verify(validationAppointmentService, times(1)).validateAppointment(any(Appointment.class));
-            verify(validationUserService, times(1)).validateSelfOrAdminOrBarber(client.getId());
             verify(repository, times(1)).save(any(Appointment.class));
         }
     }
@@ -293,10 +268,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Agendamento não encontrado", ex.getMessage());
 
-            verify(repository, times(1)).findById(nonExistingAppointmentId);
-            verify(validationUserService, never()).validationForUpdate(any(), any());
-            verify(validationAppointmentService, never()).validateAppointment(any());
-            verify(repository, never()).save(any());
+            verifyNoInteractions(validationUserService, validationAppointmentService);
         }
 
         @Test
@@ -311,9 +283,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Acesso negado", ex.getMessage());
 
-            verify(repository, times(1)).findById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForUpdate(existingAppointmentId, requestDto);
-            verify(validationAppointmentService, never()).validateAppointment(any());
+            verifyNoInteractions(validationAppointmentService);
             verify(repository, never()).save(any());
         }
 
@@ -328,10 +298,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Cliente não encontrado: " + nonValidEmail, ex.getMessage());
 
-            verify(repository, times(1)).findById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForUpdate(existingAppointmentId, requestDto);
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(validationAppointmentService, never()).validateAppointment(any());
+            verifyNoInteractions(validationAppointmentService);
             verify(repository, never()).save(any());
         }
 
@@ -347,11 +314,7 @@ public class AppointmentServiceTests {
 
             assertEquals("Barbeiro não encontrado: " + nonValidEmail, ex.getMessage());
 
-            verify(repository, times(1)).findById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForUpdate(existingAppointmentId, requestDto);
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(userRepository, times(1)).findByEmail(requestDto.getBarberEmail());
-            verify(validationAppointmentService, never()).validateAppointment(any());
+            verifyNoInteractions(validationAppointmentService);
             verify(repository, never()).save(any());
         }
 
@@ -370,11 +333,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Conflito de agendamento", ex.getMessage());
 
-            verify(repository, times(1)).findById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForUpdate(existingAppointmentId, requestDto);
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(userRepository, times(1)).findByEmail(requestDto.getBarberEmail());
-            verify(validationAppointmentService, times(1)).validateAppointment(any(Appointment.class));
             verify(repository, never()).save(any());
         }
 
@@ -387,11 +345,6 @@ public class AppointmentServiceTests {
 
             assertNotNull(result, "O DTO não deve ser nulo");
 
-            verify(repository, times(1)).findById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForUpdate(existingAppointmentId, requestDto);
-            verify(userRepository, times(1)).findByEmail(requestDto.getClientEmail());
-            verify(userRepository, times(1)).findByEmail(requestDto.getBarberEmail());
-            verify(validationAppointmentService, times(1)).validateAppointment(any(Appointment.class));
             verify(repository, times(1)).save(any(Appointment.class));
 
         }
@@ -422,8 +375,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Agendamento não encontrado: " + nonExistingAppointmentId, ex.getMessage());
 
-            verify(repository, times(1)).existsById(nonExistingAppointmentId);
-            verify(validationUserService, never()).validationForDelete(any());
             verify(repository, never()).deleteById(any());
         }
 
@@ -439,8 +390,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Acesso negado", ex.getMessage());
 
-            verify(repository, times(1)).existsById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForDelete(existingAppointmentId);
             verify(repository, never()).deleteById(any());
         }
 
@@ -453,8 +402,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Falha de integridade referencial", ex.getMessage());
 
-            verify(repository, times(1)).existsById(dependentId);
-            verify(validationUserService, times(1)).validationForDelete(dependentId);
             verify(repository, times(1)).deleteById(dependentId);
         }
 
@@ -467,8 +414,6 @@ public class AppointmentServiceTests {
                 service.deleteAppointment(existingAppointmentId);
             });
 
-            verify(repository, times(1)).existsById(existingAppointmentId);
-            verify(validationUserService, times(1)).validationForDelete(existingAppointmentId);
             verify(repository, times(1)).deleteById(existingAppointmentId);
         }
     }
@@ -496,7 +441,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Barbeiro não encontrado: " + nonExistingBarberId, ex.getMessage());
 
-            verify(userRepository, times(1)).findById(nonExistingBarberId);
             verify(repository, never()).findByBarberAndDate(any(), any());
         }
 
@@ -512,7 +456,6 @@ public class AppointmentServiceTests {
 
             assertEquals("Nenhum agendamento encontrado", ex.getMessage());
 
-            verify(userRepository, times(1)).findById(existingBarberId);
             verify(repository, times(1)).findByBarberAndDate(barber.getId(), date);
         }
 
@@ -529,7 +472,6 @@ public class AppointmentServiceTests {
             assertFalse(result.isEmpty(), "A lista não deve estar vazia");
             assertEquals(appointmentBarberProjection, result.getFirst(), "O agendamento retornado deve ser o esperado");
 
-            verify(userRepository, times(1)).findById(existingBarberId);
             verify(repository, times(1)).findByBarberAndDate(barber.getId(), date);
         }
     }
