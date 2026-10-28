@@ -1,6 +1,7 @@
 package com.barbershop_appointment_api.controllers;
 
 import com.barbershop_appointment_api.DTOs.NewUserRequestDTO;
+import com.barbershop_appointment_api.DTOs.UpdateUserDTO;
 import com.barbershop_appointment_api.DTOs.UserDTO;
 import com.barbershop_appointment_api.models.enums.UserRole;
 import com.barbershop_appointment_api.services.UserService;
@@ -43,5 +44,19 @@ public class UserController {
     public ResponseEntity<UserDTO> getMe(){
         UserDTO dto = userService.getMe();
         return ResponseEntity.ok(dto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserDTO dto) {
+        UserDTO updatedUser = userService.updateUser(id, dto);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }

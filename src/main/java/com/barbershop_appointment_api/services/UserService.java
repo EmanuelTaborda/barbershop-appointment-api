@@ -1,8 +1,10 @@
 package com.barbershop_appointment_api.services;
 
 import com.barbershop_appointment_api.DTOs.NewUserRequestDTO;
+import com.barbershop_appointment_api.DTOs.UpdateUserDTO;
 import com.barbershop_appointment_api.DTOs.UserDTO;
 import com.barbershop_appointment_api.exceptions.DatabaseException;
+import com.barbershop_appointment_api.exceptions.ResourceNotFoundException;
 import com.barbershop_appointment_api.models.entities.Role;
 import com.barbershop_appointment_api.models.entities.User;
 import com.barbershop_appointment_api.models.enums.UserRole;
@@ -19,6 +21,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.util.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -43,6 +47,7 @@ public class UserService implements UserDetailsService {
             copyDTOToEntity(dto, entity);
             Role role = roleRepository.findByAuthority(userRole);
             entity.getRoles().add(role);
+            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
             userRepository.save(entity);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Este email já possui um cadastro vinculado");
@@ -50,11 +55,43 @@ public class UserService implements UserDetailsService {
         return new NewUserRequestDTO(entity);
     }
 
+    @Transactional
+    public UserDTO updateUser(Long id, UpdateUserDTO dto) {
+        User entity = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + id));
+
+        if (StringUtils.hasText(dto.getName())) {
+            entity.setName(dto.getName());
+        }
+        if (StringUtils.hasText(dto.getEmail())) {
+            entity.setEmail(dto.getEmail());
+        }
+        if (StringUtils.hasText(dto.getPhone())) {
+            entity.setPhone(dto.getPhone());
+        }
+
+        try {
+            userRepository.saveAndFlush(entity);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Este email já possui um cadastro vinculado");
+        }
+
+        return new UserDTO(entity);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void deleteUser(Long id) {
+        User entity = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + id));
+
+        userRepository.delete(entity);
+    }
+
 
     private void copyDTOToEntity(NewUserRequestDTO dto, User entity){
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.setPassword(dto.getPassword());
         entity.setPhone(dto.getPhone());
     }
 
